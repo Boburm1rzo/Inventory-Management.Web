@@ -1,0 +1,12 @@
+{
+  "login": "Kirish",
+  "register": "Ro‘yxatdan o‘tish",
+  "email": "Email",
+  "password": "Parol",
+  "displayName": "Ism",
+  "signIn": "Kirish",
+  "signUp": "Ro‘yxatdan o‘tish",
+  "logout": "Chiqish",
+  "theme": "Mavzu",
+  "language": "Til"
+}
