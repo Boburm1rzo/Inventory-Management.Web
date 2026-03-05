@@ -1,20 +1,34 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Layout from "./components/Layout";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import AuthCallbackPage from "./pages/AuthCallbackPage";
+import React from "react";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./router";
+import { ThemeProvider } from "./context/ThemeContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import LoadingSpinner from "./components/common/LoadingSpinner";
 
-export default function App() {
+const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/auth/callback" element={<AuthCallbackPage />} />;
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <AuthProvider>
+        <AuthInitializer>
+          <RouterProvider router={router} />
+        </AuthInitializer>
+      </AuthProvider>
+    </ThemeProvider>
   );
-}
+};
+
+// Helper component to delay rendering until initial auth check is done
+const AuthInitializer: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  // Use the properly typed custom hook instead of require()
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return <LoadingSpinner fullPage />;
+  }
+
+  return <>{children}</>;
+};
+
+export default App;

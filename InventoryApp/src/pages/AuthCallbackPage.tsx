@@ -1,31 +1,25 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Card, Spinner, Alert } from "react-bootstrap";
+import { useAuth } from "../context/AuthContext";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 
-export default function AuthCallbackPage() {
-  const nav = useNavigate();
-  const [params] = useSearchParams();
+const AuthCallbackPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = params.get("token");
-    if (!token) return;
+    const token = searchParams.get("token");
+    if (token) {
+      login(token)
+        .then(() => navigate("/", { replace: true }))
+        .catch(() => navigate("/login", { replace: true }));
+    } else {
+      navigate("/login", { replace: true });
+    }
+  }, [searchParams, login, navigate]);
 
-    localStorage.setItem("token", token);
-    nav("/", { replace: true });
-  }, [params, nav]);
+  return <LoadingSpinner fullPage />;
+};
 
-  const token = params.get("token");
-
-  return (
-    <Card className="p-4">
-      {!token ? (
-        <Alert variant="danger">Token topilmadi. Qaytadan login qiling.</Alert>
-      ) : (
-        <div className="d-flex align-items-center gap-2">
-          <Spinner animation="border" size="sm" />
-          <div>Login qilinyapti...</div>
-        </div>
-      )}
-    </Card>
-  );
-}
+export default AuthCallbackPage;

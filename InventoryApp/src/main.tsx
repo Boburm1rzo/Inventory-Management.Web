@@ -1,15 +1,15 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
-import "./index.css";
-import "./i18n";
-import { ThemeProvider } from "./store/ThemeContext";
+import App from "./App";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+// Import CSS variables and global styles
+import "./styles/global.css";
+
+// Initialize i18n
+import "./i18n";
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+    <App />
   </React.StrictMode>,
 );

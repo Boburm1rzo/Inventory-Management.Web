@@ -1,12 +1,10 @@
 {
-  "login": "Kirish",
-  "register": "Ro‘yxatdan o‘tish",
-  "email": "Email",
-  "password": "Parol",
-  "displayName": "Ism",
-  "signIn": "Kirish",
-  "signUp": "Ro‘yxatdan o‘tish",
-  "logout": "Chiqish",
-  "theme": "Mavzu",
-  "language": "Til"
+  "nav": { "home": "Bosh sahifa", "inventories": "Inventarlar", "login": "Kirish", "register": "Ro'yxatdan o'tish", "logout": "Chiqish", "profile": "Profil" },
+  "auth": { "loginTitle": "Xush kelibsiz", "registerTitle": "Hisob yaratish", "email": "Email", "password": "Parol", "displayName": "Ism", "loginBtn": "Kirish", "registerBtn": "Hisob yaratish", "noAccount": "Hisobingiz yo'qmi?", "hasAccount": "Hisobingiz bormi?", "googleBtn": "Google bilan davom etish", "facebookBtn": "Facebook bilan davom etish", "orDivider": "yoki quyidagilar orqali" },
+  "home": { "latestTitle": "So'nggi inventarlar", "topTitle": "Eng mashhurlar", "columns": { "title": "Nomi", "category": "Kategoriya", "owner": "Egasi", "createdAt": "Yaratilgan", "itemCount": "Narsalar" } },
+  "inventories": { "title": "Inventarlar", "createBtn": "Yangi inventar", "columns": { "title": "Nomi", "category": "Kategoriya", "owner": "Egasi", "createdAt": "Yaratilgan" }, "empty": "Hozircha inventarlar yo'q", "deleteConfirm": "Bu inventarni o'chirishni xohlaysizmi?" },
+  "form": { "inventoryTitle": "Nomi", "description": "Tavsif", "category": "Kategoriya", "isPublic": "Ochiq inventar", "save": "Saqlash", "cancel": "Bekor qilish", "create": "Yaratish", "titlePlaceholder": "Inventar nomini kiriting" },
+  "errors": { "general": "Xatolik yuz berdi", "network": "Ulanishda xatolik. Qaytadan urinib ko'ring.", "unauthorized": "Davom etish uchun tizimga kiring.", "forbidden": "Sizda ruxsat yo'q.", "conflict": "Boshqa kimdir bu yozuvni o'zgartirdi. Sahifani yangilang.", "notFound": "Topilmadi." },
+  "common": { "loading": "Yuklanmoqda...", "noData": "Ma'lumot yo'q", "actions": "Amallar", "edit": "Tahrirlash", "delete": "O'chirish", "confirm": "Tasdiqlash", "close": "Yopish" },
+  "theme": { "light": "Yorug'", "dark": "Qorong'i" }
 }

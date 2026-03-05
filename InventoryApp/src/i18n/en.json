@@ -1,12 +1,10 @@
 {
-  "login": "Login",
-  "register": "Register",
-  "email": "Email",
-  "password": "Password",
-  "displayName": "Display name",
-  "signIn": "Sign in",
-  "signUp": "Sign up",
-  "logout": "Logout",
-  "theme": "Theme",
-  "language": "Language"
+  "nav": { "home": "Home", "inventories": "Inventories", "login": "Login", "register": "Register", "logout": "Logout", "profile": "Profile" },
+  "auth": { "loginTitle": "Welcome back", "registerTitle": "Create account", "email": "Email", "password": "Password", "displayName": "Display Name", "loginBtn": "Sign in", "registerBtn": "Create account", "noAccount": "Don't have an account?", "hasAccount": "Already have an account?", "googleBtn": "Continue with Google", "facebookBtn": "Continue with Facebook", "orDivider": "or continue with" },
+  "home": { "latestTitle": "Latest Inventories", "topTitle": "Most Popular", "columns": { "title": "Title", "category": "Category", "owner": "Owner", "createdAt": "Created", "itemCount": "Items" } },
+  "inventories": { "title": "Inventories", "createBtn": "New Inventory", "columns": { "title": "Title", "category": "Category", "owner": "Owner", "createdAt": "Created" }, "empty": "No inventories yet", "deleteConfirm": "Are you sure you want to delete this inventory?" },
+  "form": { "inventoryTitle": "Title", "description": "Description", "category": "Category", "isPublic": "Public inventory", "save": "Save", "cancel": "Cancel", "create": "Create", "titlePlaceholder": "Enter inventory title" },
+  "errors": { "general": "Something went wrong", "network": "Connection error. Please try again.", "unauthorized": "Please log in to continue.", "forbidden": "You don't have permission.", "conflict": "Someone else modified this record. Please reload.", "notFound": "Not found." },
+  "common": { "loading": "Loading...", "noData": "No data available", "actions": "Actions", "edit": "Edit", "delete": "Delete", "confirm": "Confirm", "close": "Close" },
+  "theme": { "light": "Light", "dark": "Dark" }
 }
