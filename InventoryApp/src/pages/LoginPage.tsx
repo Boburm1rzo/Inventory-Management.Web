@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { authApi } from "../api/auth.api";
+import axiosInstance from "../api/axiosInstance";
 import { useAuth } from "../context/AuthContext";
 import ErrorAlert from "../components/common/ErrorAlert";
+import "../styles/LoginPage.css";
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -36,7 +38,14 @@ const LoginPage: React.FC = () => {
   };
 
   const handleOAuth = (provider: "google" | "facebook") => {
-    window.location.href = `http://localhost:5094/api/auth/login-${provider}`;
+    // build URL using the same base as our axios instance (sans "/api") so
+    // we don't hardcode a port.  axiosInstance.baseURL =
+    // "https://localhost:7030/api" by default.
+    const apiBase = (axiosInstance.defaults.baseURL || "").replace(
+      /\/api$/,
+      "",
+    );
+    window.location.href = `${apiBase}/api/auth/login-${provider}`;
   };
 
   return (
@@ -154,70 +163,6 @@ const LoginPage: React.FC = () => {
           </Link>
         </div>
       </div>
-
-      <style>{`
-        .auth-container {
-          min-height: calc(100vh - 64px); display: flex; align-items: center; justify-content: center;
-          background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-          background-size: 200% 200%; animation: logInGradient 15s ease infinite; padding: 2rem 1rem;
-        }
-        .auth-card {
-          width: 100%; max-width: 420px; background: var(--bg-card); padding: 40px;
-          border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 1px solid var(--border);
-        }
-        .auth-title { font-size: 1.75rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem; }
-        .auth-subtitle { font-size: 0.875rem; color: var(--text-secondary); }
-        
-        .form-floating-custom { position: relative; }
-        .form-floating-custom input {
-          width: 100%; padding: 12px 16px; font-size: 1rem; color: var(--text-primary);
-          background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius-sm);
-          transition: all 0.2s ease;
-        }
-        .form-floating-custom input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-subtle); }
-        .form-floating-custom label {
-          position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted);
-          transition: all 0.2s ease; pointer-events: none; font-size: 1rem; background: var(--bg-primary); padding: 0 4px;
-        }
-        .form-floating-custom input:focus ~ label, .form-floating-custom input:not(:placeholder-shown) ~ label {
-          top: 0; font-size: 0.75rem; color: var(--accent);
-        }
-        
-        .btn-toggle-pwd {
-          position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none;
-          color: var(--text-secondary); font-size: 0.75rem; font-weight: 600; cursor: pointer;
-        }
-        
-        .btn-submit {
-          background: var(--accent); color: white; border: none; padding: 12px; border-radius: var(--radius-sm);
-          font-weight: 600; font-size: 1rem; transition: var(--transition);
-        }
-        .btn-submit:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
-        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
-        
-        .auth-divider {
-          text-align: center; margin: 1.5rem 0; position: relative;
-        }
-        .auth-divider::before {
-          content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: var(--border); z-index: 1;
-        }
-        .auth-divider span {
-          position: relative; z-index: 2; background: var(--bg-card); padding: 0 10px; color: var(--text-muted); font-size: 0.75rem;
-        }
-        
-        .btn-oauth {
-          width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
-          padding: 10px; border-radius: var(--radius-sm); font-weight: 500; font-size: 0.875rem;
-          transition: var(--transition); border: 1px solid transparent; cursor: pointer;
-        }
-        .btn-google { background: var(--bg-primary); border-color: var(--border); color: var(--text-primary); }
-        .btn-google:hover { background: var(--bg-secondary); }
-        .btn-facebook { background: #1877F2; color: white; }
-        .btn-facebook:hover { background: #166fe5; }
-        
-        .auth-link { color: var(--accent); font-weight: 600; text-decoration: none; }
-        .auth-link:hover { text-decoration: underline; }
-      `}</style>
     </div>
   );
 };

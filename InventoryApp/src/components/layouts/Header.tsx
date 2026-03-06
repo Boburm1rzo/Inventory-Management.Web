@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
+import "../../styles/Header.css";
 
 const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -186,74 +187,6 @@ const Header: React.FC = () => {
           )}
         </div>
       </div>
-
-      <style>{`
-        .app-header {
-          height: 64px;
-          background: var(--bg-header);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border-bottom: 1px solid var(--border);
-          box-shadow: var(--shadow-sm);
-          z-index: 1000;
-        }
-        .max-w-1200 { max-width: 1200px; margin: 0 auto; }
-        .logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--text-primary); }
-        
-        .search-container { position: relative; width: 300px; }
-        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-        .search-input {
-          width: 100%; padding: 8px 16px 8px 36px;
-          border-radius: 50rem; border: 1px solid var(--border);
-          background: var(--bg-secondary); color: var(--text-primary);
-          transition: var(--transition); font-size: 0.875rem;
-        }
-        .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-subtle); }
-        
-        .lang-switcher { background: var(--bg-secondary); border: 1px solid var(--border); }
-        .lang-btn {
-          border: none; background: transparent; color: var(--text-secondary);
-          font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 6px;
-          transition: var(--transition); cursor: pointer;
-        }
-        .lang-btn.active { background: var(--accent); color: white; }
-        
-        .theme-toggle-btn {
-          width: 36px; height: 36px; border-radius: 50%; border: none;
-          background: var(--bg-secondary); color: var(--text-primary);
-          display: flex; align-items: center; justify-content: center;
-          transition: var(--transition); cursor: pointer;
-        }
-        .theme-toggle-btn:hover { background: var(--accent-subtle); color: var(--accent); }
-        .theme-toggle-btn svg { transition: transform 0.3s ease; }
-        .theme-toggle-btn:active svg { transform: rotate(360deg); }
-
-        .btn-auth { font-size: 0.875rem; font-weight: 600; padding: 6px 16px; border-radius: 8px; transition: var(--transition); text-decoration: none; }
-        .btn-login { color: var(--accent); border: 1px solid var(--accent); background: transparent; }
-        .btn-login:hover { background: var(--accent-subtle); }
-        .btn-register { background: var(--accent); color: white; border: 1px solid var(--accent); }
-        .btn-register:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: white; transform: translateY(-1px); }
-
-        .user-menu-btn { background: transparent; border: none; padding: 0; color: var(--text-primary); cursor: pointer; }
-        .avatar {
-          width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--success));
-          color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem;
-        }
-        
-        .user-dropdown {
-          position: absolute; right: 0; top: calc(100% + 12px); min-width: 160px;
-          background: var(--bg-card); border: 1px solid var(--border);
-          border-radius: var(--radius-md); box-shadow: var(--shadow-md);
-          padding: 8px 0; z-index: 1050;
-        }
-        .user-dropdown .dropdown-item {
-          padding: 8px 16px; font-size: 0.875rem; color: var(--text-primary);
-          background: transparent; border: none; width: 100%; text-align: left; cursor: pointer;
-        }
-        .user-dropdown .dropdown-item:hover { background: var(--bg-secondary); }
-        .dropdown-divider { margin: 4px 0; border-color: var(--border); }
-        .slideInTop { animation: slideInTop 0.2s ease-out forwards; }
-      `}</style>
     </header>
   );
 };

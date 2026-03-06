@@ -1,0 +1,33 @@
+/* styles extracted from HomePage.tsx */
+.max-w-1200 { max-width: 1200px; margin: 0 auto; }
+.hero-section { padding: 4rem 0 3rem; }
+.hero-badge {
+  background: var(--accent-subtle); color: var(--accent);
+  padding: 6px 14px; border-radius: 50rem; font-size: 0.875rem; font-weight: 600;
+}
+.hero-title { font-size: 2.75rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text-primary); }
+.hero-subtitle { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+
+.btn-primary-custom {
+  background: var(--accent); color: white; padding: 10px 24px; border-radius: var(--radius-sm);
+  font-weight: 600; transition: var(--transition); border: 1px solid var(--accent);
+}
+.btn-primary-custom:hover { background: var(--accent-hover); color: white; transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+
+.btn-secondary-custom {
+  background: var(--bg-card); color: var(--text-primary); padding: 10px 24px; border-radius: var(--radius-sm);
+  font-weight: 600; transition: var(--transition); border: 1px solid var(--border);
+}
+.btn-secondary-custom:hover { background: var(--bg-secondary); }
+
+.section-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+.view-all { color: var(--accent); transition: var(--transition); font-size: 0.875rem; }
+.view-all:hover { color: var(--accent-hover); }
+
+.skeleton-table { background: var(--bg-card); border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); }
+.skeleton-row { height: 50px; border-bottom: 1px solid var(--border); }
+.skeleton-row:last-child { border-bottom: none; }
+
+/* delay utilities for home page animations */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }

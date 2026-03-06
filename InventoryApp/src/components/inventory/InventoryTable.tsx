@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "../../styles/InventoryTable.css";
 import { useTranslation } from "react-i18next";
 import type { InventoryListItemDto } from "../../types";
 
@@ -60,7 +61,7 @@ const InventoryTable: React.FC<Props> = ({
               <tr
                 key={inv.id}
                 className="inv-row"
-                style={{ animationDelay: `${index * 0.05}s` }}
+                style={{ "--delay": `${index * 0.05}s` } as React.CSSProperties}
               >
                 <td>
                   <Link to={`/inventories/${inv.id}`} className="inv-title">
@@ -135,56 +136,6 @@ const InventoryTable: React.FC<Props> = ({
           })}
         </tbody>
       </table>
-
-      <style>{`
-        .inventory-table-wrapper {
-          background: var(--bg-card);
-          border-radius: var(--radius-md);
-          box-shadow: var(--shadow-sm);
-          overflow-x: auto;
-        }
-        .inventory-table { border-collapse: collapse; text-align: left; }
-        .inventory-table th {
-          background: var(--bg-secondary); color: var(--text-secondary);
-          font-weight: 600; font-size: 0.75rem; text-transform: uppercase;
-          letter-spacing: 0.05em; padding: 12px 24px; border-bottom: 1px solid var(--border);
-        }
-        .inventory-table td {
-          padding: 16px 24px; border-bottom: 1px solid var(--border);
-          vertical-align: middle; font-size: 0.875rem;
-        }
-        .inventory-table tbody tr:last-child td { border-bottom: none; }
-        
-        .inv-row {
-          background: transparent; transition: background 0.15s ease;
-          animation: fadeInUp 0.3s ease-out forwards; opacity: 0; transform: translateY(8px);
-        }
-        .inv-row:hover { background: var(--bg-secondary); }
-        
-        .inv-title { font-weight: 600; color: var(--accent); text-decoration: none; }
-        .inv-title:hover { text-decoration: underline; }
-        
-        .cat-badge {
-          background: var(--accent-subtle); color: var(--accent);
-          padding: 4px 10px; border-radius: 6px; font-weight: 500; font-size: 0.75rem;
-        }
-        .text-secondary-custom { color: var(--text-secondary); }
-        .text-muted-custom { color: var(--text-muted); }
-        
-        .action-col { width: 80px; }
-        .action-cell .action-icons { opacity: 0; transition: opacity 0.15s ease; }
-        .inv-row:hover .action-cell .action-icons { opacity: 1; }
-        
-        .icon-btn {
-          width: 28px; height: 28px; border-radius: 50%; border: none;
-          background: transparent; display: inline-flex; align-items: center; justify-content: center;
-          cursor: pointer; transition: var(--transition);
-        }
-        .edit-btn { color: var(--accent); }
-        .edit-btn:hover { background: var(--accent-subtle); }
-        .delete-btn { color: var(--danger); }
-        .delete-btn:hover { background: rgba(239, 68, 68, 0.1); }
-      `}</style>
     </div>
   );
 };

@@ -1,0 +1,10 @@
+/* styles for InventoriesPage.tsx */
+/* button for create action */
+.btn-accent {
+  background: var(--accent); border: none;
+  color: white;
+}
+.btn-accent:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}

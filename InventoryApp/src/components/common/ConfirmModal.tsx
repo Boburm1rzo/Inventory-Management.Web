@@ -10,6 +10,8 @@ interface Props {
   isProcessing?: boolean;
 }
 
+import "../../styles/ConfirmModal.css";
+
 const ConfirmModal: React.FC<Props> = ({
   isOpen,
   title,
@@ -57,21 +59,6 @@ const ConfirmModal: React.FC<Props> = ({
           </button>
         </div>
       </div>
-
-      <style>{`
-        .custom-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 1050; display: flex; align-items: center; justify-content: center; }
-        .custom-modal-content { background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); width: 100%; max-width: 400px; border: 1px solid var(--border); }
-        .modal-icon-danger { width: 48px; height: 48px; border-radius: 50%; background: rgba(239, 68, 68, 0.1); color: var(--danger); display: flex; align-items: center; justify-content: center; }
-        .btn-modal-cancel { background: var(--bg-secondary); color: var(--text-primary); border: none; padding: 10px 20px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }
-        .btn-modal-cancel:hover { background: var(--border); }
-        .btn-modal-confirm { border: none; padding: 10px 20px; border-radius: var(--radius-sm); font-weight: 600; color: white; cursor: pointer; }
-        .btn-modal-confirm.danger { background: var(--danger); }
-        .btn-modal-confirm.danger:hover { background: #dc2626; }
-        .animate-fade-in { animation: fadeIn 0.2s ease-out; }
-        .animate-scale-up { animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes scaleUp { from { opacity: 0.9; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-      `}</style>
     </div>
   );
 };

@@ -1,0 +1,30 @@
+/* styles for InventoryForModal.tsx */
+.custom-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.custom-modal-content {
+  background: var(--bg-card);
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+/* override form-control styles inside modal to match theme */
+.custom-modal-content .form-control {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+/* button modifications */
+.btn-save {
+  background: var(--accent);
+  border: none;
+}
+.btn-save:hover { background: var(--accent-hover); }

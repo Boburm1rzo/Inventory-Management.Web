@@ -6,6 +6,8 @@ interface Props {
   autoDismiss?: boolean;
 }
 
+import "../../styles/ErrorAlert.css";
+
 const ErrorAlert: React.FC<Props> = ({
   message,
   onDismiss,
@@ -45,17 +47,6 @@ const ErrorAlert: React.FC<Props> = ({
           &times;
         </button>
       )}
-
-      <style>{`
-        .custom-alert {
-          background-color: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--danger);
-          color: var(--danger); padding: 12px 16px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-          display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
-        }
-        .btn-close-custom { background: transparent; border: none; color: var(--danger); font-size: 1.5rem; line-height: 1; cursor: pointer; opacity: 0.8; }
-        .btn-close-custom:hover { opacity: 1; }
-        .animate-slide-in { animation: slideInTop 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-      `}</style>
     </div>
   );
 };

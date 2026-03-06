@@ -6,6 +6,8 @@ interface Props {
   message?: string;
 }
 
+import "../../styles/EmptyState.css";
+
 const EmptyState: React.FC<Props> = ({ title, message }) => {
   const { t } = useTranslation();
 
@@ -32,12 +34,6 @@ const EmptyState: React.FC<Props> = ({ title, message }) => {
       {message && (
         <p className="empty-message text-secondary mb-0">{message}</p>
       )}
-
-      <style>{`
-        .empty-state { padding: 4rem 2rem; }
-        .empty-icon-wrapper { width: 80px; height: 80px; background: var(--bg-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .empty-title { color: var(--text-primary); }
-      `}</style>
     </div>
   );
 };

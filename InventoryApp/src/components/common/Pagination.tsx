@@ -6,6 +6,8 @@ interface Props {
   onPageChange: (page: number) => void;
 }
 
+import "../../styles/Pagination.css";
+
 const Pagination: React.FC<Props> = ({ page, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
 
@@ -45,18 +47,6 @@ const Pagination: React.FC<Props> = ({ page, totalPages, onPageChange }) => {
       >
         &rarr;
       </button>
-
-      <style>{`
-        .page-btn {
-          min-width: 36px; height: 36px; border-radius: var(--radius-sm); border: none;
-          background: transparent; color: var(--text-secondary); font-weight: 500;
-          display: inline-flex; align-items: center; justify-content: center;
-          transition: var(--transition); cursor: pointer;
-        }
-        .page-btn:hover:not(:disabled) { background: var(--bg-secondary); color: var(--text-primary); }
-        .page-btn.active { background: var(--accent); color: white; }
-        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-      `}</style>
     </div>
   );
 };

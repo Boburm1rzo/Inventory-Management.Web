@@ -5,6 +5,7 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import InventoriesPage from "../pages/InventoriesPage";
 import AuthCallbackPage from "../pages/AuthCallbackPage";
+import InventoryDetailPage from "../pages/InventoriesPage"; // ADD THIS IMPORT
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,11 @@ export const router = createBrowserRouter([
       {
         path: "inventories",
         element: <InventoriesPage />,
+      },
+      // ADD THIS NEW ROUTE HERE:
+      {
+        path: "inventories/:id",
+        element: <InventoryDetailPage />,
       },
       {
         path: "*",

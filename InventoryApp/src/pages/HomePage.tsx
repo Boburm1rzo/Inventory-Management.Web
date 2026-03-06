@@ -6,6 +6,7 @@ import { inventoriesApi } from "../api/inventories.api";
 import type { InventoryListItemDto } from "../types";
 import InventoryTable from "../components/inventory/InventoryTable";
 import ErrorAlert from "../components/common/ErrorAlert";
+import "../styles/HomePage.css";
 
 const HomePage: React.FC = () => {
   const { t } = useTranslation();
@@ -67,10 +68,7 @@ const HomePage: React.FC = () => {
       {error && <ErrorAlert message={error} onDismiss={() => setError(null)} />}
 
       {/* Latest Inventories */}
-      <section
-        className="mt-5 animate-fade-up"
-        style={{ animationDelay: "0.1s" }}
-      >
+      <section className="mt-5 animate-fade-up delay-1">
         <div className="d-flex justify-content-between align-items-end mb-3">
           <h2 className="section-title m-0">
             {t("home.latestTitle", "Latest Inventories")}
@@ -95,10 +93,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Top Inventories */}
-      <section
-        className="mt-5 mb-5 animate-fade-up"
-        style={{ animationDelay: "0.2s" }}
-      >
+      <section className="mt-5 mb-5 animate-fade-up delay-2">
         <h2 className="section-title mb-3">
           {t("home.topTitle", "Most Popular")}
         </h2>
@@ -112,37 +107,6 @@ const HomePage: React.FC = () => {
           <InventoryTable inventories={top} showActions={false} />
         )}
       </section>
-
-      <style>{`
-        .max-w-1200 { max-width: 1200px; margin: 0 auto; }
-        .hero-section { padding: 4rem 0 3rem; }
-        .hero-badge {
-          background: var(--accent-subtle); color: var(--accent);
-          padding: 6px 14px; border-radius: 50rem; font-size: 0.875rem; font-weight: 600;
-        }
-        .hero-title { font-size: 2.75rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text-primary); }
-        .hero-subtitle { font-size: 1.125rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
-        
-        .btn-primary-custom {
-          background: var(--accent); color: white; padding: 10px 24px; border-radius: var(--radius-sm);
-          font-weight: 600; transition: var(--transition); border: 1px solid var(--accent);
-        }
-        .btn-primary-custom:hover { background: var(--accent-hover); color: white; transform: translateY(-1px); box-shadow: var(--shadow-sm); }
-        
-        .btn-secondary-custom {
-          background: var(--bg-card); color: var(--text-primary); padding: 10px 24px; border-radius: var(--radius-sm);
-          font-weight: 600; transition: var(--transition); border: 1px solid var(--border);
-        }
-        .btn-secondary-custom:hover { background: var(--bg-secondary); }
-
-        .section-title { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
-        .view-all { color: var(--accent); transition: var(--transition); font-size: 0.875rem; }
-        .view-all:hover { color: var(--accent-hover); }
-
-        .skeleton-table { background: var(--bg-card); border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); }
-        .skeleton-row { height: 50px; border-bottom: 1px solid var(--border); }
-        .skeleton-row:last-child { border-bottom: none; }
-      `}</style>
     </div>
   );
 };

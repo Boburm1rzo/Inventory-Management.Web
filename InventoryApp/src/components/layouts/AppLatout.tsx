@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
+import "../../styles/AppLayout.css";
 
 const AppLayout: React.FC = () => {
   return (
@@ -9,19 +10,6 @@ const AppLayout: React.FC = () => {
       <main className="main-content">
         <Outlet />
       </main>
-
-      <style>{`
-        .app-wrapper {
-          display: flex;
-          flex-direction: column;
-          min-height: 100vh;
-        }
-        .main-content {
-          flex: 1;
-          padding-top: 2rem;
-          padding-bottom: 2rem;
-        }
-      `}</style>
     </div>
   );
 };
