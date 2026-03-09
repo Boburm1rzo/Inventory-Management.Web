@@ -25,8 +25,8 @@ const HomePage: React.FC = () => {
           inventoriesApi.getLatestInventories(),
           inventoriesApi.getTopInventories(),
         ]);
-        setLatest(latestData);
-        setTop(topData);
+        setLatest(latestData || []);
+        setTop(topData || []);
       } catch (err: any) {
         setError(err.message || t("errors.general"));
       } finally {

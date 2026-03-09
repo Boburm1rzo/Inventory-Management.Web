@@ -205,7 +205,7 @@ const FieldsTab: React.FC<FieldsTabProps> = ({ inventoryId, canEdit }) => {
     try {
       setLoading(true);
       const data = await getFields(inventoryId);
-      setFields(data);
+      setFields(data || []);
       setError(null);
     } catch (err) {
       const message =
@@ -377,7 +377,7 @@ const AddFieldModal: React.FC<{
   const [type, setType] = useState<FieldType>("SingleLineText");
   const [displayInTable, setDisplayInTable] = useState(false);
 
-  const textFieldCount = existingFields.filter(
+  const textFieldCount = (existingFields || []).filter(
     (f) => f.type === "SingleLineText" || f.type === "MultiLineText",
   ).length;
   const maxTextFields = 3;

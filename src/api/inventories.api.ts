@@ -14,21 +14,31 @@ export const inventoriesApi = {
     const response = await axiosInstance.get<PagedResult<InventoryListItemDto>>(
       `/inventories?page=${page}&size=${size}`,
     );
-    return response.data;
+    return (
+      response.data || {
+        items: [],
+        totalCount: 0,
+        page,
+        pageSize: size,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      }
+    );
   },
 
   getLatestInventories: async (): Promise<InventoryListItemDto[]> => {
     const response = await axiosInstance.get<PagedResult<InventoryListItemDto>>(
       `/inventories?page=1&size=6`,
     );
-    return response.data.items;
+    return response.data?.items || [];
   },
 
   getTopInventories: async (): Promise<InventoryListItemDto[]> => {
     const response = await axiosInstance.get<PagedResult<InventoryListItemDto>>(
       `/inventories?page=1&size=5&sort=itemCount`,
     );
-    return response.data.items;
+    return response.data?.items || [];
   },
 
   getInventoryById: async (id: number): Promise<InventoryDto> => {

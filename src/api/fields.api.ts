@@ -12,7 +12,7 @@ export const getFields = async (
   const response = await axiosInstance.get(
     `/inventories/${inventoryId}/fields`,
   );
-  return response.data;
+  return response.data || [];
 };
 
 export const addField = async (

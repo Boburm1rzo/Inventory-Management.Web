@@ -31,7 +31,7 @@ const InventoryTable: React.FC<Props> = ({
     });
   };
 
-  if (inventories.length === 0) return null;
+  if (!inventories || inventories.length === 0) return null;
 
   return (
     <div className="inventory-table-wrapper">
