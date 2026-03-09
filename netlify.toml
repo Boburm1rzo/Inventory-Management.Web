@@ -3,3 +3,8 @@
   to = "http://185.197.195.244:8080/api/:splat"
   status = 200
   force = true
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    cache-control = "no-cache, no-store, must-revalidate"
