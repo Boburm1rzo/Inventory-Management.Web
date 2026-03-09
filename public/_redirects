@@ -1,5 +1,3 @@
-# API so'rovlarini backend manzilingizga yuborish (Backend-ni Render yoki boshqa joyga yuklagan bo'lsangiz)
-/api/* https://backend-manzilingiz.com/api/:splat  200
+ /api/* https://backend-manzilingiz.com/api/:splat  200
 
-# Barcha qolgan yo'llarni index.html ga yo'naltirish (SPA 404 xatosini tuzatish uchun)
-/* /index.html  200
+ /* /index.html  200
