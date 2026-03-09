@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken, removeToken } from "../utils/token";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
