@@ -49,6 +49,54 @@ export interface CategoryDto {
   name: string;
 }
 
+export interface CustomFields {
+  strings: string[]; // Up to 3 strings
+  texts: string[]; // Up to 3 multiline texts
+  numbers: number[]; // Up to 3 numbers
+  links: string[]; // Up to 3 links
+  booleans: boolean[]; // Up to 3 booleans
+}
+
+export interface ItemDto {
+  id: number;
+  customId: string;
+  tags: string[];
+  customFields: CustomFields;
+  createdAt: string;
+  updatedAt: string;
+  rowVersion: string;
+}
+
+export interface Item {
+  id: number;
+  customId: string;
+  tags: string[];
+  customFields: CustomFields;
+  createdAt: string;
+  updatedAt: string;
+  rowVersion: string;
+  // Add any additional fields if needed
+}
+
+export interface CreateItemDto {
+  tags: string[];
+  customFields: CustomFields;
+}
+
+export interface UpdateItemDto {
+  tags: string[];
+  customFields: CustomFields;
+  rowVersion: string;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export interface PagedResult<T> {
   items: T[];
   totalCount: number;
@@ -116,4 +164,79 @@ export interface CreateIdFormatPartDto {
 
 export interface ReorderIdFormatPartsDto {
   orderedIds: number[];
+}
+
+export interface InventoryAccessDto {
+  userId: string;
+  displayName: string;
+  avatarUrl?: string;
+  grantedAt: string;
+}
+
+export interface AddAccessDto {
+  userId: string;
+}
+
+export interface UserSearchDto {
+  id: string;
+  displayName: string;
+  email: string;
+  avatarUrl?: string;
+}
+
+export interface PostDto {
+  id: number;
+  content: string;
+  authorName: string;
+  avatarUrl?: string;
+  createdAt: string;
+}
+
+export interface CreatePostDto {
+  content: string;
+}
+
+export interface ItemSearchResultDto {
+  itemId: number;
+  customId: string;
+  inventoryId: number;
+  inventoryTitle: string;
+  matchedFields: string[];
+}
+
+export interface SearchResultDto {
+  inventories: InventoryListItemDto[];
+  items: ItemSearchResultDto[];
+}
+
+export interface AdminUserDto {
+  id: string;
+  displayName: string;
+  email: string;
+  avatarUrl?: string;
+  isBlocked: boolean;
+  createdAt: string;
+  inventoryCount: number;
+  itemCount: number;
+}
+
+export interface AdminStatsDto {
+  totalUsers: number;
+  totalInventories: number;
+  totalItems: number;
+  topInventoriesByItems: InventoryListItemDto[];
+  recentUsers: AdminUserDto[];
+}
+
+export interface PersonalStatsDto {
+  totalInventories: number;
+  totalItems: number;
+  totalLikes: number;
+  inventories: InventoryListItemDto[];
+}
+
+export interface LikeDto {
+  itemId: number;
+  likedByCurrentUser: boolean;
+  totalLikes: number;
 }

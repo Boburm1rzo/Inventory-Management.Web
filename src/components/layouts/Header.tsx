@@ -3,15 +3,28 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
+import { searchApi } from "../../api/search.api";
+import type { SearchResultDto } from "../../types";
 import "../../styles/Header.css";
 
 const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Search state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResultDto | null>(
+    null,
+  );
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchDropdownRef = useRef<HTMLDivElement>(null);
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -23,6 +36,50 @@ const Header: React.FC = () => {
     navigate("/login");
   };
 
+  // Search functions
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setShowSearchDropdown(true);
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (value.length >= 2) {
+      searchTimeoutRef.current = setTimeout(async () => {
+        try {
+          setSearchLoading(true);
+          const results = await searchApi.search(value);
+          setSearchResults(results);
+        } catch (err) {
+          console.error("Search error:", err);
+          setSearchResults(null);
+        } finally {
+          setSearchLoading(false);
+        }
+      }, 300);
+    } else {
+      setSearchResults(null);
+      setSearchLoading(false);
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSearchDropdown(false);
+      setSearchQuery("");
+    }
+  };
+
+  const handleSearchResultClick = (path: string) => {
+    navigate(path);
+    setShowSearchDropdown(false);
+    setSearchQuery("");
+  };
+
+  // Effects
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -30,6 +87,14 @@ const Header: React.FC = () => {
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setIsDropdownOpen(false);
+      }
+      if (
+        searchDropdownRef.current &&
+        !searchDropdownRef.current.contains(event.target as Node) &&
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target as Node)
+      ) {
+        setShowSearchDropdown(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -64,24 +129,207 @@ const Header: React.FC = () => {
         </Link>
 
         {/* Center: Search (Hidden on Mobile) */}
-        <div className="d-none d-md-block search-container">
-          <svg
-            className="search-icon"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input
-            type="text"
-            className="search-input"
-            placeholder={t("common.search", "Search inventories...")}
-          />
+        <div
+          className="d-none d-md-block search-container"
+          style={{ position: "relative" }}
+        >
+          <form onSubmit={handleSearchSubmit}>
+            <svg
+              className="search-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              ref={searchInputRef}
+              type="text"
+              className="search-input"
+              placeholder={t("common.search", "Search inventories...")}
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onFocus={() => setShowSearchDropdown(true)}
+            />
+          </form>
+
+          {showSearchDropdown && (searchResults || searchLoading) && (
+            <div
+              ref={searchDropdownRef}
+              className="search-dropdown"
+              style={{
+                position: "absolute",
+                top: "calc(100% + 8px)",
+                left: 0,
+                right: 0,
+                background: "var(--bg-card)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--radius-md)",
+                boxShadow: "var(--shadow-md)",
+                zIndex: 1000,
+                maxHeight: "400px",
+                overflowY: "auto",
+              }}
+            >
+              {searchLoading ? (
+                <div
+                  style={{
+                    padding: "1rem",
+                    textAlign: "center",
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  {t("search.searching", "Searching...")}
+                </div>
+              ) : searchResults ? (
+                <>
+                  {searchResults.inventories.length > 0 && (
+                    <div>
+                      <div
+                        style={{
+                          padding: "0.5rem 1rem",
+                          fontWeight: "500",
+                          color: "var(--text-secondary)",
+                          borderBottom: "1px solid var(--border)",
+                        }}
+                      >
+                        {t("search.inventories", "Inventories")}
+                      </div>
+                      {searchResults.inventories
+                        .slice(0, 3)
+                        .map((inventory) => (
+                          <div
+                            key={inventory.id}
+                            onClick={() =>
+                              handleSearchResultClick(
+                                `/inventories/${inventory.id}`,
+                              )
+                            }
+                            style={{
+                              padding: "0.75rem 1rem",
+                              cursor: "pointer",
+                              borderBottom: "1px solid var(--border)",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "0.75rem",
+                            }}
+                            onMouseEnter={(e) =>
+                              (e.currentTarget.style.background =
+                                "var(--bg-secondary)")
+                            }
+                            onMouseLeave={(e) =>
+                              (e.currentTarget.style.background = "transparent")
+                            }
+                          >
+                            <div style={{ fontSize: "1.25rem" }}>📦</div>
+                            <div>
+                              <div style={{ fontWeight: "500" }}>
+                                {inventory.title}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "0.875rem",
+                                  color: "var(--text-muted)",
+                                }}
+                              >
+                                {inventory.ownerName} ·{" "}
+                                {inventory.itemCount || 0}{" "}
+                                {t("search.items", "items")}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+
+                  {searchResults.items.length > 0 && (
+                    <div>
+                      <div
+                        style={{
+                          padding: "0.5rem 1rem",
+                          fontWeight: "500",
+                          color: "var(--text-secondary)",
+                          borderBottom: "1px solid var(--border)",
+                        }}
+                      >
+                        {t("search.items", "Items")}
+                      </div>
+                      {searchResults.items.slice(0, 3).map((item) => (
+                        <div
+                          key={`${item.inventoryId}-${item.itemId}`}
+                          onClick={() =>
+                            handleSearchResultClick(
+                              `/inventories/${item.inventoryId}?tab=items`,
+                            )
+                          }
+                          style={{
+                            padding: "0.75rem 1rem",
+                            cursor: "pointer",
+                            borderBottom: "1px solid var(--border)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.75rem",
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.background =
+                              "var(--bg-secondary)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.background = "transparent")
+                          }
+                        >
+                          <div style={{ fontSize: "1.25rem" }}>📄</div>
+                          <div>
+                            <div style={{ fontWeight: "500" }}>
+                              {item.customId}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "0.875rem",
+                                color: "var(--text-muted)",
+                              }}
+                            >
+                              {item.inventoryTitle}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {(searchResults.inventories.length > 0 ||
+                    searchResults.items.length > 0) && (
+                    <div
+                      onClick={handleSearchSubmit}
+                      style={{
+                        padding: "0.75rem 1rem",
+                        cursor: "pointer",
+                        color: "var(--accent)",
+                        fontWeight: "500",
+                        textAlign: "center",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background =
+                          "var(--bg-secondary)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = "transparent")
+                      }
+                    >
+                      🔍{" "}
+                      {t("search.seeAll", 'See all results for "{{query}}"', {
+                        query: searchQuery,
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : null}
+            </div>
+          )}
         </div>
 
         {/* Right: Actions */}
@@ -167,6 +415,22 @@ const Header: React.FC = () => {
 
               {isDropdownOpen && (
                 <div className="user-dropdown slideInTop">
+                  <Link
+                    to="/me"
+                    className="dropdown-item"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    My Page
+                  </Link>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="dropdown-item"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      Admin Panel
+                    </Link>
+                  )}
                   <Link
                     to="/profile"
                     className="dropdown-item"

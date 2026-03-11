@@ -6,6 +6,9 @@ import { inventoriesApi } from "../api/inventories.api";
 import type { InventoryDto } from "../types";
 import FieldsTab from "../components/inventory/tabs/FieldsTab";
 import CustomIdTab from "../components/inventory/tabs/CustomIdTab";
+import ItemsTab from "../components/inventory/tabs/ItemsTab";
+import AccessTab from "../components/inventory/tabs/AccessTab";
+import DiscussionTab from "../components/inventory/tabs/DiscussionTab";
 import ErrorAlert from "../components/common/ErrorAlert";
 
 type TabKey =
@@ -60,19 +63,15 @@ const InventoryPage: React.FC = () => {
       case "custom-id":
         return <CustomIdTab inventoryId={parseInt(id!)} canEdit={canEdit} />;
       case "items":
-        return <div>{t("inventory.tabs.items", "Items — coming soon")}</div>;
+        return <ItemsTab inventoryId={parseInt(id!)} canEdit={canEdit} />;
       case "settings":
         return (
           <div>{t("inventory.tabs.settings", "Settings — coming soon")}</div>
         );
       case "discussion":
-        return (
-          <div>
-            {t("inventory.tabs.discussion", "Discussion — coming soon")}
-          </div>
-        );
+        return <DiscussionTab inventoryId={parseInt(id!)} />;
       case "access":
-        return <div>{t("inventory.tabs.access", "Access — coming soon")}</div>;
+        return <AccessTab inventoryId={parseInt(id!)} canManage={canEdit} />;
       case "statistics":
         return (
           <div>

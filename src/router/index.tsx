@@ -6,6 +6,10 @@ import RegisterPage from "../pages/RegisterPage";
 import InventoriesPage from "../pages/InventoriesPage";
 import AuthCallbackPage from "../pages/AuthCallbackPage";
 import InventoryPage from "../pages/InventoryPage";
+import ItemPage from "../pages/ItemPage";
+import SearchPage from "../pages/SearchPage";
+import AdminPage from "../pages/AdminPage";
+import PersonalPage from "../pages/PersonalPage";
 
 export const router = createBrowserRouter([
   {
@@ -32,10 +36,25 @@ export const router = createBrowserRouter([
         path: "inventories",
         element: <InventoriesPage />,
       },
-      // ADD THIS NEW ROUTE HERE:
       {
         path: "inventories/:id",
         element: <InventoryPage />,
+      },
+      {
+        path: "inventories/:inventoryId/items/:itemId",
+        element: <ItemPage />,
+      },
+      {
+        path: "search",
+        element: <SearchPage />,
+      },
+      {
+        path: "admin",
+        element: <AdminPage />,
+      },
+      {
+        path: "me",
+        element: <PersonalPage />,
       },
       {
         path: "*",
