@@ -78,7 +78,7 @@ const InventoryFormModal: React.FC<Props> = ({
       onSuccess(); // Jadvalni yangilash
       onClose(); // Modalni yopish
     } catch (err: any) {
-      if (err.message.includes("409")) {
+      if (err.message?.includes("409")) {
         setError(
           t(
             "errors.conflict",

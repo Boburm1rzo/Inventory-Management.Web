@@ -57,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser(null);
   };
 
-  const isAdmin = user?.roles.includes("Admin") ?? false;
+  const isAdmin = user?.roles?.includes("Admin") ?? false;
 
   return (
     <AuthContext.Provider

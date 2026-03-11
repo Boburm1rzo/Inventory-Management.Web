@@ -136,7 +136,7 @@ const AdminPage: React.FC = () => {
   };
 
   const chartData =
-    stats?.topInventoriesByItems.map((inv) => ({
+    stats?.topInventoriesByItems?.map((inv) => ({
       name:
         inv.title.length > 15 ? inv.title.substring(0, 15) + "..." : inv.title,
       items: inv.itemCount || 0,
