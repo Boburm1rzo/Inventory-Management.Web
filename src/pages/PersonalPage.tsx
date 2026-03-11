@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { Package, ClipboardList, Heart, Plus } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { personalApi } from "../api/personal.api";
@@ -11,7 +10,6 @@ import EmptyState from "../components/common/EmptyState";
 import InventoryTable from "../components/inventory/InventoryTable";
 
 const PersonalPage: React.FC = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
 
@@ -31,7 +29,9 @@ const PersonalPage: React.FC = () => {
       const data = await personalApi.getMyStats();
       setStats(data);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to load your statistics");
+      setError(
+        err instanceof Error ? err.message : "Failed to load your statistics",
+      );
     } finally {
       setLoading(false);
     }
@@ -55,10 +55,19 @@ const PersonalPage: React.FC = () => {
       <div className="profile-header mb-5 animate-fade-up">
         <div className="d-flex align-items-center gap-4">
           {user.avatarUrl ? (
-            <img src={user.avatarUrl} alt={user.displayName} className="profile-avatar" />
+            <img
+              src={user.avatarUrl}
+              alt={user.displayName}
+              className="profile-avatar"
+            />
           ) : (
             <div className="profile-avatar-initials">
-              {user.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+              {user.displayName
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toUpperCase()
+                .slice(0, 2)}
             </div>
           )}
           <div>
@@ -71,32 +80,50 @@ const PersonalPage: React.FC = () => {
       {error && <ErrorAlert message={error} onDismiss={() => setError(null)} />}
 
       {/* Stats Cards */}
-      <div className="stats-grid mb-5 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+      <div
+        className="stats-grid mb-5 animate-fade-up"
+        style={{ animationDelay: "0.1s" }}
+      >
         <div className="stat-card">
-          <div className="stat-icon inventories"><Package size={24} /></div>
+          <div className="stat-icon inventories">
+            <Package size={24} />
+          </div>
           <div className="stat-content">
-            <div className="stat-value">{loading ? '...' : stats?.totalInventories || 0}</div>
+            <div className="stat-value">
+              {loading ? "..." : stats?.totalInventories || 0}
+            </div>
             <div className="stat-label">My Inventories</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon items"><ClipboardList size={24} /></div>
+          <div className="stat-icon items">
+            <ClipboardList size={24} />
+          </div>
           <div className="stat-content">
-            <div className="stat-value">{loading ? '...' : stats?.totalItems || 0}</div>
+            <div className="stat-value">
+              {loading ? "..." : stats?.totalItems || 0}
+            </div>
             <div className="stat-label">My Items</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon likes"><Heart size={24} fill="#ef4444" color="#ef4444" /></div>
+          <div className="stat-icon likes">
+            <Heart size={24} fill="#ef4444" color="#ef4444" />
+          </div>
           <div className="stat-content">
-            <div className="stat-value">{loading ? '...' : stats?.totalLikes || 0}</div>
+            <div className="stat-value">
+              {loading ? "..." : stats?.totalLikes || 0}
+            </div>
             <div className="stat-label">Likes received</div>
           </div>
         </div>
       </div>
 
       {/* Inventories Section */}
-      <div className="my-inventories-section animate-fade-up" style={{ animationDelay: '0.2s' }}>
+      <div
+        className="my-inventories-section animate-fade-up"
+        style={{ animationDelay: "0.2s" }}
+      >
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="section-title m-0">My Inventories</h2>
           <Link to="/inventories" className="btn-create-link">
@@ -111,13 +138,10 @@ const PersonalPage: React.FC = () => {
             ))}
           </div>
         ) : stats?.inventories && stats.inventories.length > 0 ? (
-          <InventoryTable 
-            inventories={stats.inventories} 
-            showActions={false} 
-          />
+          <InventoryTable inventories={stats.inventories} showActions={false} />
         ) : (
-          <EmptyState 
-            title="You haven't created any inventories yet" 
+          <EmptyState
+            title="You haven't created any inventories yet"
             message="Start organizing your items by creating your first inventory."
           />
         )}

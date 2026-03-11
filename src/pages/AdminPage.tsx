@@ -1,23 +1,23 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { 
-  Users, 
-  Package, 
-  ClipboardList, 
-  Trash2, 
-  Search, 
-  ShieldAlert, 
-  ShieldCheck 
+import {
+  Users,
+  Package,
+  ClipboardList,
+  Trash2,
+  Search,
+  ShieldAlert,
+  ShieldCheck,
 } from "lucide-react";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
   ResponsiveContainer,
-  Cell
+  Cell,
 } from "recharts";
 import { useAuth } from "../context/AuthContext";
 import { adminApi } from "../api/admin.api";
@@ -28,7 +28,6 @@ import ConfirmModal from "../components/common/ConfirmModal";
 import Pagination from "../components/common/Pagination";
 
 const AdminPage: React.FC = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, isAdmin, isLoading: authLoading } = useAuth();
 
@@ -41,7 +40,7 @@ const AdminPage: React.FC = () => {
   const [statsLoading, setStatsLoading] = useState(true);
   const [usersLoading, setUsersLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Confirm modal state
   const [userToDelete, setUserToDelete] = useState<AdminUserDto | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -137,10 +136,12 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  const chartData = stats?.topInventoriesByItems.map(inv => ({
-    name: inv.title.length > 15 ? inv.title.substring(0, 15) + "..." : inv.title,
-    items: inv.itemCount || 0
-  })) || [];
+  const chartData =
+    stats?.topInventoriesByItems.map((inv) => ({
+      name:
+        inv.title.length > 15 ? inv.title.substring(0, 15) + "..." : inv.title,
+      items: inv.itemCount || 0,
+    })) || [];
 
   if (authLoading || (!isAdmin && authLoading)) {
     return <LoadingSpinner fullPage />;
@@ -157,23 +158,41 @@ const AdminPage: React.FC = () => {
       {/* Stats Grid */}
       <div className="stats-grid mb-5">
         <div className="stat-card">
-          <div className="stat-icon users"><Users size={24} /></div>
+          <div className="stat-icon users">
+            <Users size={24} />
+          </div>
           <div className="stat-content">
-            {statsLoading ? <div className="skeleton-text" /> : <div className="stat-value">{stats?.totalUsers || 0}</div>}
+            {statsLoading ? (
+              <div className="skeleton-text" />
+            ) : (
+              <div className="stat-value">{stats?.totalUsers || 0}</div>
+            )}
             <div className="stat-label">Total users</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon inventories"><Package size={24} /></div>
+          <div className="stat-icon inventories">
+            <Package size={24} />
+          </div>
           <div className="stat-content">
-            {statsLoading ? <div className="skeleton-text" /> : <div className="stat-value">{stats?.totalInventories || 0}</div>}
+            {statsLoading ? (
+              <div className="skeleton-text" />
+            ) : (
+              <div className="stat-value">{stats?.totalInventories || 0}</div>
+            )}
             <div className="stat-label">Total inventories</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon items"><ClipboardList size={24} /></div>
+          <div className="stat-icon items">
+            <ClipboardList size={24} />
+          </div>
           <div className="stat-content">
-            {statsLoading ? <div className="skeleton-text" /> : <div className="stat-value">{stats?.totalItems || 0}</div>}
+            {statsLoading ? (
+              <div className="skeleton-text" />
+            ) : (
+              <div className="stat-value">{stats?.totalItems || 0}</div>
+            )}
             <div className="stat-label">Total items</div>
           </div>
         </div>
@@ -184,17 +203,29 @@ const AdminPage: React.FC = () => {
         <div className="col-12 col-xl-6">
           <div className="admin-section-card h-100">
             <h3 className="section-title mb-4">Top Inventories by Items</h3>
-            <div style={{ width: '100%', height: 250 }}>
+            <div style={{ width: "100%", height: 250 }}>
               {statsLoading ? (
                 <div className="shimmer-bg h-100 rounded-3" />
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-                    <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
+                  <BarChart
+                    data={chartData}
+                    margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
+                  >
+                    <XAxis
+                      dataKey="name"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
                     <YAxis fontSize={12} tickLine={false} axisLine={false} />
-                    <Tooltip 
-                      cursor={{ fill: 'var(--bg-secondary)' }}
-                      contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px' }}
+                    <Tooltip
+                      cursor={{ fill: "var(--bg-secondary)" }}
+                      contentStyle={{
+                        background: "var(--bg-card)",
+                        border: "1px solid var(--border)",
+                        borderRadius: "8px",
+                      }}
                     />
                     <Bar dataKey="items" radius={[4, 4, 0, 0]}>
                       {chartData.map((_entry, index) => (
@@ -215,9 +246,9 @@ const AdminPage: React.FC = () => {
               <h3 className="section-title m-0">Users</h3>
               <div className="search-box">
                 <Search size={16} className="search-icon" />
-                <input 
-                  type="text" 
-                  placeholder="Search users..." 
+                <input
+                  type="text"
+                  placeholder="Search users..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -239,12 +270,16 @@ const AdminPage: React.FC = () => {
                   {usersLoading ? (
                     [...Array(5)].map((_, i) => (
                       <tr key={i}>
-                        <td colSpan={5}><div className="skeleton-row shimmer-bg" /></td>
+                        <td colSpan={5}>
+                          <div className="skeleton-row shimmer-bg" />
+                        </td>
                       </tr>
                     ))
                   ) : users.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="text-center py-4 text-muted">No users found</td>
+                      <td colSpan={5} className="text-center py-4 text-muted">
+                        No users found
+                      </td>
                     </tr>
                   ) : (
                     users.map((u) => (
@@ -252,14 +287,28 @@ const AdminPage: React.FC = () => {
                         <td>
                           <div className="d-flex align-items-center gap-2">
                             {u.avatarUrl ? (
-                              <img src={u.avatarUrl} alt={u.displayName} className="user-avatar" />
+                              <img
+                                src={u.avatarUrl}
+                                alt={u.displayName}
+                                className="user-avatar"
+                              />
                             ) : (
                               <div className="user-avatar-initials">
-                                {u.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                                {u.displayName
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")
+                                  .toUpperCase()
+                                  .slice(0, 2)}
                               </div>
                             )}
                             <div className="user-info">
-                              <div className="user-name">{u.displayName} {u.id === user?.id && <span className="self-badge">(You)</span>}</div>
+                              <div className="user-name">
+                                {u.displayName}{" "}
+                                {u.id === user?.id && (
+                                  <span className="self-badge">(You)</span>
+                                )}
+                              </div>
                               <div className="user-email">{u.email}</div>
                             </div>
                           </div>
@@ -267,21 +316,29 @@ const AdminPage: React.FC = () => {
                         <td className="text-center">{u.inventoryCount}</td>
                         <td className="text-center">{u.itemCount}</td>
                         <td className="text-center">
-                          <span className={`status-badge ${u.isBlocked ? 'blocked' : 'active'}`}>
-                            {u.isBlocked ? 'Blocked' : 'Active'}
+                          <span
+                            className={`status-badge ${u.isBlocked ? "blocked" : "active"}`}
+                          >
+                            {u.isBlocked ? "Blocked" : "Active"}
                           </span>
                         </td>
                         <td className="text-end">
                           <div className="d-flex justify-content-end gap-2">
-                            <button 
-                              className={`btn-action ${u.isBlocked ? 'unblock' : 'block'}`}
+                            <button
+                              className={`btn-action ${u.isBlocked ? "unblock" : "block"}`}
                               disabled={u.id === user?.id}
                               onClick={() => handleBlockToggle(u)}
-                              title={u.isBlocked ? 'Unblock user' : 'Block user'}
+                              title={
+                                u.isBlocked ? "Unblock user" : "Block user"
+                              }
                             >
-                              {u.isBlocked ? <ShieldCheck size={18} /> : <ShieldAlert size={18} />}
+                              {u.isBlocked ? (
+                                <ShieldCheck size={18} />
+                              ) : (
+                                <ShieldAlert size={18} />
+                              )}
                             </button>
-                            <button 
+                            <button
                               className="btn-action delete"
                               disabled={u.id === user?.id}
                               onClick={() => setUserToDelete(u)}
@@ -299,10 +356,10 @@ const AdminPage: React.FC = () => {
             </div>
 
             <div className="mt-4">
-              <Pagination 
-                page={page} 
-                totalPages={Math.ceil(totalCount / PAGE_SIZE)} 
-                onPageChange={setPage} 
+              <Pagination
+                page={page}
+                totalPages={Math.ceil(totalCount / PAGE_SIZE)}
+                onPageChange={setPage}
               />
             </div>
           </div>
@@ -310,7 +367,7 @@ const AdminPage: React.FC = () => {
       </div>
 
       {userToDelete && (
-        <ConfirmModal 
+        <ConfirmModal
           isOpen={true}
           title="Delete User"
           message={`Are you sure you want to delete ${userToDelete.displayName}? This will delete all their inventories and items. This action cannot be undone.`}
