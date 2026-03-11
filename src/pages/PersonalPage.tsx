@@ -62,9 +62,9 @@ const PersonalPage: React.FC = () => {
             />
           ) : (
             <div className="profile-avatar-initials">
-              {user.displayName
+              {(user.displayName || "?")
                 .split(" ")
-                .map((n) => n[0])
+                .map((n) => n?.[0] || "")
                 .join("")
                 .toUpperCase()
                 .slice(0, 2)}

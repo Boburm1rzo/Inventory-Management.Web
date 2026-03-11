@@ -406,7 +406,7 @@ const Header: React.FC = () => {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 <div className="avatar">
-                  {user?.displayName.charAt(0).toUpperCase()}
+                  {user?.displayName?.[0]?.toUpperCase() || "?"}
                 </div>
                 <span className="d-none d-sm-block fw-medium text-sm">
                   {user?.displayName}

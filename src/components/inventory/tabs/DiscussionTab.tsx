@@ -216,14 +216,13 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
                     />
                   ) : (
                     <div className="avatar-initials">
-                      {post.authorName
+                      {(post.authorName || "?")
                         .split(" ")
-                        .map((n) => n[0])
+                        .map((n) => n?.[0] || "")
                         .join("")
                         .toUpperCase()
                         .slice(0, 2)}
-                    </div>
-                  )}
+                    </div>                  )}
                   <div style={{ flex: 1 }}>
                     <div
                       style={{

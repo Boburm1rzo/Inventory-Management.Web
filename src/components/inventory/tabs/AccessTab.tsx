@@ -67,9 +67,9 @@ const UserOption: React.FC<UserOptionProps> = ({
             fontWeight: "700",
           }}
         >
-          {user.displayName
+          {(user.displayName || "?")
             .split(" ")
-            .map((n) => n[0])
+            .map((n) => n?.[0] || "")
             .join("")
             .toUpperCase()
             .slice(0, 2)}
@@ -336,9 +336,9 @@ const AccessTab: React.FC<AccessTabProps> = ({ inventoryId, canManage }) => {
                       fontWeight: "700",
                     }}
                   >
-                    {access.displayName
+                    {(access.displayName || "?")
                       .split(" ")
-                      .map((n) => n[0])
+                      .map((n) => n?.[0] || "")
                       .join("")
                       .toUpperCase()
                       .slice(0, 2)}

@@ -293,9 +293,9 @@ const AdminPage: React.FC = () => {
                               />
                             ) : (
                               <div className="user-avatar-initials">
-                                {u.displayName
+                                {(u.displayName || "?")
                                   .split(" ")
-                                  .map((n) => n[0])
+                                  .map((n) => n?.[0] || "")
                                   .join("")
                                   .toUpperCase()
                                   .slice(0, 2)}
