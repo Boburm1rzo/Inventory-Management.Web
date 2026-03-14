@@ -74,7 +74,7 @@ const FieldCard: React.FC<FieldCardProps> = ({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const config = FIELD_TYPE_CONFIG[field.type];
+  const config = FIELD_TYPE_CONFIG[field.type] || { icon: "?", color: "#94a3b8" };
 
   return (
     <div ref={setNodeRef} style={style} className="field-card">

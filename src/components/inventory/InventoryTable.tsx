@@ -69,8 +69,8 @@ const InventoryTable: React.FC<Props> = ({
                   </Link>
                 </td>
                 <td>
-                  {inv.category ? (
-                    <span className="cat-badge">{inv.category}</span>
+                  {inv.categoryName ? (
+                    <span className="cat-badge">{inv.categoryName}</span>
                   ) : (
                     <span className="text-muted">—</span>
                   )}

@@ -97,9 +97,7 @@ const ItemPage: React.FC = () => {
                 customId: item?.customId,
               })}
         </h1>
-        {!isCreate && item && (
-          <LikeButton itemId={item.id} />
-        )}
+        {!isCreate && item && <LikeButton itemId={item.id} />}
       </div>
 
       {!isCreate && (
@@ -125,7 +123,8 @@ const ItemPage: React.FC = () => {
             <strong>{t("items.customId", "Custom ID")}:</strong> {item.customId}
           </p>
           <p>
-            <strong>{t("items.tags", "Tags")}:</strong> {item.tags.join(", ")}
+            <strong>{t("items.tags", "Tags")}:</strong>{" "}
+            {(item.tags || []).join(", ")}
           </p>
           <p>
             <strong>{t("items.createdAt", "Created")}:</strong>{" "}
@@ -138,7 +137,7 @@ const ItemPage: React.FC = () => {
 
           <h3>{t("items.customFields", "Custom Fields")}</h3>
           <div>
-            {item.customFields.strings.map(
+            {(item.customFields?.strings || []).map(
               (str, i) =>
                 str && (
                   <p key={i}>
@@ -146,7 +145,7 @@ const ItemPage: React.FC = () => {
                   </p>
                 ),
             )}
-            {item.customFields.texts.map(
+            {(item.customFields?.texts || []).map(
               (txt, i) =>
                 txt && (
                   <p key={i}>
@@ -154,7 +153,7 @@ const ItemPage: React.FC = () => {
                   </p>
                 ),
             )}
-            {item.customFields.numbers.map(
+            {(item.customFields?.numbers || []).map(
               (num, i) =>
                 num !== 0 && (
                   <p key={i}>
@@ -162,7 +161,7 @@ const ItemPage: React.FC = () => {
                   </p>
                 ),
             )}
-            {item.customFields.links.map(
+            {(item.customFields?.links || []).map(
               (link, i) =>
                 link && (
                   <p key={i}>
@@ -173,7 +172,7 @@ const ItemPage: React.FC = () => {
                   </p>
                 ),
             )}
-            {item.customFields.booleans.map((bool, i) => (
+            {(item.customFields?.booleans || []).map((bool, i) => (
               <p key={i}>
                 Boolean {i + 1}: {bool ? "Yes" : "No"}
               </p>

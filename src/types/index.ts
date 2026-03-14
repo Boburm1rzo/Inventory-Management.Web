@@ -15,7 +15,7 @@ export interface UserResponseDto {
 export interface InventoryListItemDto {
   id: number;
   title: string;
-  category?: string;
+  categoryName?: string;
   ownerName: string;
   createdAt: string;
   itemCount?: number;
@@ -29,22 +29,29 @@ export interface InventoryDto {
   isPublic: boolean;
   ownerName: string;
   ownerId: string;
-  category?: string;
+  categoryName?: string;
+  categoryId?: number;
   tags: string[];
+  tagIds?: number[];
   createdAt: string;
   rowVersion: string;
 }
 
 export interface CreateInventoryDto {
   title: string;
-  description?: string;
+  description: string;
+  categoryId: number;
+  imageUrl: string;
   isPublic: boolean;
-  imageUrl?: string;
-  categoryId?: number;
   tags: string[];
 }
 
 export interface CategoryDto {
+  id: number;
+  name: string;
+}
+
+export interface TagDto {
   id: number;
   name: string;
 }

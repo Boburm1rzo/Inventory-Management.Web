@@ -4,6 +4,8 @@ import type {
   InventoryDto,
   CreateInventoryDto,
   PagedResult,
+  CategoryDto,
+  TagDto,
 } from "../types";
 
 export const inventoriesApi = {
@@ -53,6 +55,16 @@ export const inventoriesApi = {
       "/inventories",
       dto,
     );
+    return response.data;
+  },
+
+  getCategories: async (): Promise<CategoryDto[]> => {
+    const response = await axiosInstance.get<CategoryDto[]>("/categories");
+    return response.data;
+  },
+
+  getTags: async (): Promise<TagDto[]> => {
+    const response = await axiosInstance.get<TagDto[]>("/tags");
     return response.data;
   },
 
