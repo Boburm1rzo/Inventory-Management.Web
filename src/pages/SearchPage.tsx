@@ -96,7 +96,7 @@ const SearchPage: React.FC = () => {
             }}
           >
             {t("search.by", "By: {{owner}}", { owner: inventory.ownerName })}
-            {inventory.category && ` · ${inventory.category}`}
+            {inventory.categoryName && ` · ${inventory.categoryName}`}
             {inventory.itemCount !== undefined &&
               ` · ${inventory.itemCount} ${t("search.items", "items")}`}
           </p>
