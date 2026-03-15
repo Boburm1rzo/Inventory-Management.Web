@@ -11,6 +11,9 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use( 
   (config) => {
+    if (config.baseURL?.startsWith("http") && config.url?.startsWith("/")) {
+      config.url = config.url.substring(1);
+    }
     const token = getToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
