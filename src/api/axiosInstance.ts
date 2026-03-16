@@ -2,20 +2,17 @@ import axios from "axios";
 import { getToken, removeToken } from "../utils/token";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-
-axiosInstance.interceptors.request.use( 
+// Request interceptor — token qo'shish
+axiosInstance.interceptors.request.use(
   (config) => {
-    if (config.baseURL?.startsWith("http") && config.url?.startsWith("/")) {
-      config.url = config.url.substring(1);
-    }
     const token = getToken();
-    if (token && config.headers) {
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -23,23 +20,28 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
+// Response interceptor — xato handling
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
+    // 401 — token muddati o'tgan yoki invalid
     if (error.response?.status === 401) {
       removeToken();
-      if (
-        !window.location.pathname.includes("/login") &&
-        !error.config.url?.includes("/auth/me")
-      ) {
+      const isLoginPage = window.location.pathname.includes("/login");
+      const isAuthMe = error.config?.url?.includes("/auth/me");
+
+      if (!isLoginPage && !isAuthMe) {
         window.location.href = "/login";
       }
     }
 
+    // Backend dan kelgan xato message ni olish
     const message =
       error.response?.data?.message ||
+      error.response?.data?.error ||
       error.message ||
       "An unexpected error occurred";
+
     return Promise.reject(new Error(message));
   },
 );
