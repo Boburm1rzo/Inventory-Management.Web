@@ -28,7 +28,6 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
   onUpdated,
   onDeleted,
 }) => {
-  const { t } = useTranslation();
   const [formData, setFormData] = useState<CreateInventoryDto>({
     title: inventory.title,
     description: inventory.description || "",
@@ -73,7 +72,9 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
       onUpdated(updated);
       alert("Changes saved successfully!");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to update inventory");
+      setError(
+        err instanceof Error ? err.message : "Failed to update inventory",
+      );
     } finally {
       setLoading(false);
     }
@@ -85,12 +86,17 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
       await inventoriesApi.deleteInventory(inventoryId);
       onDeleted();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to delete inventory");
+      setError(
+        err instanceof Error ? err.message : "Failed to delete inventory",
+      );
       setLoading(false);
     }
   };
 
-  const tagOptions = availableTags.map((t) => ({ value: t.name, label: t.name }));
+  const tagOptions = availableTags.map((t) => ({
+    value: t.name,
+    label: t.name,
+  }));
   const selectedTags = formData.tags.map((tag) => ({ value: tag, label: tag }));
 
   return (
@@ -144,7 +150,9 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                   type="text"
                   className="form-control"
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
                   disabled={!canEdit || loading}
                   required
                 />
@@ -155,7 +163,9 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                   className="form-control"
                   rows={4}
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   disabled={!canEdit || loading}
                 />
               </div>
@@ -168,12 +178,19 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
               <select
                 className="form-select"
                 value={formData.categoryId}
-                onChange={(e) => setFormData({ ...formData, categoryId: Number(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    categoryId: Number(e.target.value),
+                  })
+                }
                 disabled={!canEdit || loading}
                 required
               >
                 {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -184,10 +201,14 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                   className="form-check-input"
                   type="checkbox"
                   checked={formData.isPublic}
-                  onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isPublic: e.target.checked })
+                  }
                   disabled={!canEdit || loading}
                 />
-                <label className="form-check-label">Public (everyone can see)</label>
+                <label className="form-check-label">
+                  Public (everyone can see)
+                </label>
               </div>
             </div>
           </div>
@@ -201,7 +222,9 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
               onChange={(selected) => {
                 setFormData({
                   ...formData,
-                  tags: selected ? (selected as any[]).map((opt) => opt.value) : [],
+                  tags: selected
+                    ? (selected as any[]).map((opt) => opt.value)
+                    : [],
                 });
               }}
               isDisabled={!canEdit || loading}
@@ -211,7 +234,11 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
 
           {canEdit && (
             <div className="d-flex justify-content-end">
-              <button type="submit" className="btn btn-primary d-flex align-items-center gap-2" disabled={loading}>
+              <button
+                type="submit"
+                className="btn btn-primary d-flex align-items-center gap-2"
+                disabled={loading}
+              >
                 <Save size={18} /> Save Changes
               </button>
             </div>
@@ -222,7 +249,10 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
       {canEdit && (
         <div className="danger-zone">
           <h4>Danger Zone</h4>
-          <p>Once you delete an inventory, there is no going back. Please be certain.</p>
+          <p>
+            Once you delete an inventory, there is no going back. Please be
+            certain.
+          </p>
           <button
             type="button"
             className="btn btn-outline-danger d-flex align-items-center gap-2"
