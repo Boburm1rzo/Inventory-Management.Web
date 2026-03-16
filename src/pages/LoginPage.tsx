@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { authApi } from "../api/auth.api";
-import axiosInstance from "../api/axiosInstance";
 import { useAuth } from "../hooks/useAuth";
 import ErrorAlert from "../components/common/ErrorAlert";
 import "../styles/LoginPage.css";
@@ -38,10 +37,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handleOAuth = (provider: "google" | "facebook") => {
-    // build URL using the same base as our axios instance (sans "/api") so
-    // we don't hardcode a port.  axiosInstance.baseURL =
-    // "https://localhost:7030/api" by default.
-    const apiBase = (axiosInstance.defaults.baseURL || "").replace(
+    const apiBase = (import.meta.env.VITE_API_BASE_URL as string).replace(
       /\/api$/,
       "",
     );

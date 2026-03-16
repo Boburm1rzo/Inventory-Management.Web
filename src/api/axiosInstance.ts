@@ -8,7 +8,6 @@ const axiosInstance = axios.create({
   },
 });
 
-// Request interceptor — token qo'shish
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = getToken();
@@ -20,11 +19,9 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// Response interceptor — xato handling
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // 401 — token muddati o'tgan yoki invalid
     if (error.response?.status === 401) {
       removeToken();
       const isLoginPage = window.location.pathname.includes("/login");
@@ -35,7 +32,6 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    // Backend dan kelgan xato message ni olish
     const message =
       error.response?.data?.message ||
       error.response?.data?.error ||
