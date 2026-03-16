@@ -64,36 +64,53 @@ export interface CustomFields {
   booleans: boolean[]; // Up to 3 booleans
 }
 
+export interface ItemFieldValueDto {
+  fieldId: number;
+  fieldTitle: string;
+  fieldType: FieldType;
+  textValue?: string;
+  numericValue?: number;
+  booleanValue?: boolean;
+}
+
 export interface ItemDto {
   id: number;
   customId: string;
-  tags: string[];
-  customFields: CustomFields;
   createdAt: string;
   updatedAt: string;
+  createdByName: string;
+  fieldValues: ItemFieldValueDto[];
   rowVersion: string;
 }
 
-export interface Item {
+export interface ItemListItemDto {
   id: number;
   customId: string;
-  tags: string[];
-  customFields: CustomFields;
   createdAt: string;
-  updatedAt: string;
-  rowVersion: string;
-  // Add any additional fields if needed
+  createdByName: string;
+  fieldValues: ItemFieldValueDto[];
+}
+
+export interface CreateItemFieldValueDto {
+  fieldId: number;
+  textValue?: string;
+  numericValue?: number;
+  booleanValue?: boolean;
 }
 
 export interface CreateItemDto {
-  tags: string[];
-  customFields: CustomFields;
+  fieldValues: CreateItemFieldValueDto[];
 }
 
 export interface UpdateItemDto {
-  tags: string[];
-  customFields: CustomFields;
+  fieldValues: CreateItemFieldValueDto[];
   rowVersion: string;
+}
+
+export interface InventoryStatsDto {
+  totalItems: number;
+  totalLikes: number;
+  itemsPerDay: { date: string; count: number }[];
 }
 
 export interface PaginatedResponse<T> {

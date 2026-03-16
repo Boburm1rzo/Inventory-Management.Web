@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
+import { useParams, useSearchParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { inventoriesApi } from "../api/inventories.api";
-import type { InventoryDto } from "../types";
+import { getFields } from "../api/fields.api";
+import type { InventoryDto, InventoryFieldDto } from "../types";
 import FieldsTab from "../components/inventory/tabs/FieldsTab";
 import CustomIdTab from "../components/inventory/tabs/CustomIdTab";
 import ItemsTab from "../components/inventory/tabs/ItemsTab";
 import AccessTab from "../components/inventory/tabs/AccessTab";
 import DiscussionTab from "../components/inventory/tabs/DiscussionTab";
+import SettingsTab from "../components/inventory/tabs/SettingsTab";
+import StatisticsTab from "../components/inventory/tabs/StatisticsTab";
 import ErrorAlert from "../components/common/ErrorAlert";
 
 type TabKey =
@@ -25,8 +28,10 @@ const InventoryPage: React.FC = () => {
   const { user, isAdmin } = useAuth();
   const { id } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [inventory, setInventory] = useState<InventoryDto | null>(null);
+  const [fields, setFields] = useState<InventoryFieldDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,15 +39,21 @@ const InventoryPage: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      fetchInventory(parseInt(id));
+      const inventoryId = parseInt(id);
+      fetchData(inventoryId);
     }
   }, [id]);
 
-  const fetchInventory = async (inventoryId: number) => {
+  const fetchData = async (inventoryId: number) => {
     try {
       setLoading(true);
-      const data = await inventoriesApi.getInventoryById(inventoryId);
-      setInventory(data);
+      const [invData, fieldsData] = await Promise.all([
+        inventoriesApi.getInventoryById(inventoryId),
+        getFields(inventoryId),
+      ]);
+
+      setInventory(invData);
+      setFields(fieldsData);
     } catch (err: any) {
       setError(err.message || "Network error");
     } finally {
@@ -57,27 +68,38 @@ const InventoryPage: React.FC = () => {
   const canEdit = isAdmin || user?.id === inventory?.ownerId;
 
   const renderTabContent = () => {
+    if (!inventory || !id) return null;
+    const invId = parseInt(id);
+
     switch (activeTab) {
       case "fields":
-        return <FieldsTab inventoryId={parseInt(id!)} canEdit={canEdit} />;
+        return <FieldsTab inventoryId={invId} canEdit={canEdit} />;
       case "custom-id":
-        return <CustomIdTab inventoryId={parseInt(id!)} canEdit={canEdit} />;
+        return <CustomIdTab inventoryId={invId} canEdit={canEdit} />;
       case "items":
-        return <ItemsTab inventoryId={parseInt(id!)} canEdit={canEdit} />;
+        return (
+          <ItemsTab
+            inventoryId={invId}
+            fields={fields}
+            canEdit={canEdit}
+          />
+        );
       case "settings":
         return (
-          <div>{t("inventory.tabs.settings", "Settings — coming soon")}</div>
+          <SettingsTab
+            inventoryId={invId}
+            inventory={inventory}
+            canEdit={canEdit}
+            onUpdated={setInventory}
+            onDeleted={() => navigate("/inventories")}
+          />
         );
       case "discussion":
-        return <DiscussionTab inventoryId={parseInt(id!)} />;
+        return <DiscussionTab inventoryId={invId} />;
       case "access":
-        return <AccessTab inventoryId={parseInt(id!)} canManage={canEdit} />;
+        return <AccessTab inventoryId={invId} canManage={canEdit} />;
       case "statistics":
-        return (
-          <div>
-            {t("inventory.tabs.statistics", "Statistics — coming soon")}
-          </div>
-        );
+        return <StatisticsTab inventoryId={invId} />;
       default:
         return null;
     }

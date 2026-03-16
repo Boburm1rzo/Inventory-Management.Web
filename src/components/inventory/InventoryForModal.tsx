@@ -10,6 +10,7 @@ import type {
 } from "../../types";
 import { inventoriesApi } from "../../api/inventories.api";
 import ErrorAlert from "../common/ErrorAlert";
+import ImageUpload from "../common/ImageUpload";
 import "../../styles/InventoryForModal.css";
 
 interface Props {
@@ -203,12 +204,10 @@ const InventoryFormModal: React.FC<Props> = ({
             </div>
 
             <div className="mb-3">
-              <label className="form-label">{t("form.imageUrl", "Image URL (Optional)")}</label>
-              <input
-                type="text"
-                className="form-control"
+              <label className="form-label">{t("form.imageUrl", "Inventory Image")}</label>
+              <ImageUpload
                 value={formData.imageUrl}
-                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                onChange={(url) => setFormData({ ...formData, imageUrl: url })}
                 disabled={loading}
               />
             </div>

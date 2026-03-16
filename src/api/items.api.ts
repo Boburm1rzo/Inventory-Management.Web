@@ -1,7 +1,7 @@
 import axiosInstance from "./axiosInstance";
 import type {
   ItemDto,
-  Item,
+  ItemListItemDto,
   CreateItemDto,
   UpdateItemDto,
   PagedResult,
@@ -11,38 +11,28 @@ export const itemsApi = {
   getItems: async (
     inventoryId: number,
     page: number,
-    size: number,
-  ): Promise<PagedResult<ItemDto>> => {
-    const response = await axiosInstance.get<PagedResult<ItemDto>>(
-      `/inventories/${inventoryId}/items?page=${page}&size=${size}`,
+    size: number
+  ): Promise<PagedResult<ItemListItemDto>> => {
+    const response = await axiosInstance.get<PagedResult<ItemListItemDto>>(
+      `/inventories/${inventoryId}/items?page=${page}&size=${size}`
     );
-    return (
-      response.data || {
-        items: [],
-        totalCount: 0,
-        page,
-        pageSize: size,
-        totalPages: 0,
-        hasNextPage: false,
-        hasPreviousPage: false,
-      }
-    );
+    return response.data;
   },
 
-  getItemById: async (inventoryId: number, itemId: number): Promise<Item> => {
-    const response = await axiosInstance.get<Item>(
-      `/inventories/${inventoryId}/items/${itemId}`,
+  getItem: async (inventoryId: number, itemId: number): Promise<ItemDto> => {
+    const response = await axiosInstance.get<ItemDto>(
+      `/inventories/${inventoryId}/items/${itemId}`
     );
     return response.data;
   },
 
   createItem: async (
     inventoryId: number,
-    data: CreateItemDto,
-  ): Promise<Item> => {
-    const response = await axiosInstance.post<Item>(
+    dto: CreateItemDto
+  ): Promise<ItemDto> => {
+    const response = await axiosInstance.post<ItemDto>(
       `/inventories/${inventoryId}/items`,
-      data,
+      dto
     );
     return response.data;
   },
@@ -50,11 +40,11 @@ export const itemsApi = {
   updateItem: async (
     inventoryId: number,
     itemId: number,
-    data: UpdateItemDto,
-  ): Promise<Item> => {
-    const response = await axiosInstance.put<Item>(
+    dto: UpdateItemDto
+  ): Promise<ItemDto> => {
+    const response = await axiosInstance.put<ItemDto>(
       `/inventories/${inventoryId}/items/${itemId}`,
-      data,
+      dto
     );
     return response.data;
   },
