@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { Save, Trash2 } from "lucide-react";
 import CreatableSelect from "react-select/creatable";
 import { inventoriesApi } from "../../../api/inventories.api";
