@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { inventoriesApi } from "../api/inventories.api";
 import type { InventoryListItemDto } from "../types";
 import InventoryTable from "../components/inventory/InventoryTable";

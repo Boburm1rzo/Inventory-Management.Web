@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { accessApi } from "../../../api/access.api";
 import type { InventoryAccessDto, UserSearchDto } from "../../../types";
@@ -103,26 +103,7 @@ const AccessTab: React.FC<AccessTabProps> = ({ inventoryId, canManage }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetchAccessList();
-  }, [inventoryId]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        searchInputRef.current &&
-        !searchInputRef.current.contains(event.target as Node)
-      ) {
-        setShowDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const fetchAccessList = async () => {
+  const fetchAccessList = useCallback(async () => {
     try {
       setLoading(true);
       const data = await accessApi.getAccessList(inventoryId);
@@ -132,7 +113,11 @@ const AccessTab: React.FC<AccessTabProps> = ({ inventoryId, canManage }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [inventoryId]);
+
+  useEffect(() => {
+    fetchAccessList();
+  }, [fetchAccessList]);
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);

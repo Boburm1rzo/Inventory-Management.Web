@@ -18,9 +18,10 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { adminApi } from "../api/admin.api";
 import type { AdminStatsDto, AdminUserDto } from "../types";
+
 import LoadingSpinner from "../components/common/LoadingSpinner";
 import ErrorAlert from "../components/common/ErrorAlert";
 import ConfirmModal from "../components/common/ConfirmModal";

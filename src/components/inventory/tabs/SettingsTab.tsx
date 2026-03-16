@@ -72,8 +72,8 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
       });
       onUpdated(updated);
       alert("Changes saved successfully!");
-    } catch (err: any) {
-      setError(err.message || "Failed to update inventory");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to update inventory");
     } finally {
       setLoading(false);
     }
@@ -84,8 +84,8 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
     try {
       await inventoriesApi.deleteInventory(inventoryId);
       onDeleted();
-    } catch (err: any) {
-      setError(err.message || "Failed to delete inventory");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to delete inventory");
       setLoading(false);
     }
   };
@@ -239,9 +239,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         title="Delete Inventory"
         message="Are you sure you want to delete this inventory? All items and fields within it will be permanently removed."
         onConfirm={handleDelete}
-        onClose={() => setShowDeleteConfirm(false)}
-        confirmText="Delete permanently"
-        variant="danger"
+        onCancel={() => setShowDeleteConfirm(false)}
       />
     </div>
   );

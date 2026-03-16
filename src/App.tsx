@@ -2,7 +2,8 @@ import React from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 import { ThemeProvider } from "./context/ThemeContext";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
+import { useAuth } from "./hooks/useAuth";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 
 const App: React.FC = () => {

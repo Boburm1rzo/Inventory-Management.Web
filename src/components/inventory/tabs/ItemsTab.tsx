@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Edit2, Trash2, ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { itemsApi } from "../../../api/items.api";
-import { likesApi } from "../../../api/likes.api";
 import type {
   ItemListItemDto,
   ItemDto,
   InventoryFieldDto,
   PagedResult,
   ItemFieldValueDto,
-  CreateItemDto,
-  UpdateItemDto,
-  CreateItemFieldValueDto,
 } from "../../../types";
 import LoadingSpinner from "../../common/LoadingSpinner";
 import ErrorAlert from "../../common/ErrorAlert";
@@ -20,13 +22,19 @@ import EmptyState from "../../common/EmptyState";
 import LikeButton from "../../common/LikeButton";
 import { timeAgo } from "../../../utils/time";
 
+import ItemForm from "../../item/ItemForm";
+
 interface ItemsTabProps {
   inventoryId: number;
   fields: InventoryFieldDto[];
   canEdit: boolean;
 }
 
-const ItemsTab: React.FC<ItemsTabProps> = ({ inventoryId, fields, canEdit }) => {
+const ItemsTab: React.FC<ItemsTabProps> = ({
+  inventoryId,
+  fields,
+  canEdit,
+}) => {
   const { t } = useTranslation();
   const [data, setData] = useState<PagedResult<ItemListItemDto> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,8 +50,8 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ inventoryId, fields, canEdit }) => 
       const res = await itemsApi.getItems(inventoryId, page, 10);
       setData(res);
       setError(null);
-    } catch (err: any) {
-      setError(err.message || "Failed to load items");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to load items");
     } finally {
       setLoading(false);
     }
@@ -59,8 +67,8 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ inventoryId, fields, canEdit }) => 
       await itemsApi.deleteItem(inventoryId, itemToDelete);
       fetchItems();
       setItemToDelete(null);
-    } catch (err: any) {
-      setError(err.message || "Failed to delete item");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to delete item");
     }
   };
 
@@ -69,8 +77,8 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ inventoryId, fields, canEdit }) => 
       const item = await itemsApi.getItem(inventoryId, itemId);
       setEditingItem(item);
       setIsModalOpen(true);
-    } catch (err: any) {
-      setError(err.message || "Failed to fetch item details");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to fetch item details");
     }
   };
 
@@ -228,15 +236,11 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ inventoryId, fields, canEdit }) => 
                     <td className="fw-medium">{item.customId}</td>
                     {tableFields.map((f) => {
                       const val = item.fieldValues.find(
-                        (fv) => fv.fieldId === f.id
+                        (fv) => fv.fieldId === f.id,
                       );
-                      return (
-                        <td key={f.id}>{val ? renderValue(val) : "—"}</td>
-                      );
+                      return <td key={f.id}>{val ? renderValue(val) : "—"}</td>;
                     })}
-                    <td className="text-muted">
-                      {timeAgo(item.createdAt)}
-                    </td>
+                    <td className="text-muted">{timeAgo(item.createdAt)}</td>
                     <td>
                       <div className="actions-cell">
                         <LikeButton itemId={item.id} />
@@ -287,16 +291,20 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ inventoryId, fields, canEdit }) => 
       )}
 
       {isModalOpen && (
-        <ItemFormModal
-          inventoryId={inventoryId}
-          fields={fields}
-          item={editingItem}
-          onClose={() => setIsModalOpen(false)}
-          onSuccess={() => {
-            setIsModalOpen(false);
-            fetchItems();
-          }}
-        />
+        <div className="custom-modal-backdrop">
+          <div className="custom-modal-content p-4" style={{ maxWidth: "500px" }}>
+            <ItemForm
+              inventoryId={inventoryId}
+              fields={fields}
+              item={editingItem}
+              onCancel={() => setIsModalOpen(false)}
+              onSuccess={() => {
+                setIsModalOpen(false);
+                fetchItems();
+              }}
+            />
+          </div>
+        </div>
       )}
 
       <ConfirmModal
@@ -304,175 +312,8 @@ const ItemsTab: React.FC<ItemsTabProps> = ({ inventoryId, fields, canEdit }) => 
         title="Delete Item"
         message="Are you sure you want to delete this item? This action cannot be undone."
         onConfirm={handleDelete}
-        onClose={() => setItemToDelete(null)}
-        confirmText="Delete"
-        variant="danger"
+        onCancel={() => setItemToDelete(null)}
       />
-    </div>
-  );
-};
-
-interface ItemFormModalProps {
-  inventoryId: number;
-  fields: InventoryFieldDto[];
-  item: ItemDto | null;
-  onClose: () => void;
-  onSuccess: () => void;
-}
-
-const ItemFormModal: React.FC<ItemFormModalProps> = ({
-  inventoryId,
-  fields,
-  item,
-  onClose,
-  onSuccess,
-}) => {
-  const { t } = useTranslation();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [formValues, setFormValues] = useState<Record<number, any>>({});
-
-  useEffect(() => {
-    if (item) {
-      const initialValues: Record<number, any> = {};
-      item.fieldValues.forEach((fv) => {
-        if (fv.fieldType === "Boolean") initialValues[fv.fieldId] = fv.booleanValue;
-        else if (fv.fieldType === "Numeric")
-          initialValues[fv.fieldId] = fv.numericValue;
-        else initialValues[fv.fieldId] = fv.textValue || "";
-      });
-      setFormValues(initialValues);
-    } else {
-      const initialValues: Record<number, any> = {};
-      fields.forEach((f) => {
-        if (f.type === "Boolean") initialValues[f.id] = false;
-        else if (f.type === "Numeric") initialValues[f.id] = "";
-        else initialValues[f.id] = "";
-      });
-      setFormValues(initialValues);
-    }
-  }, [item, fields]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const fieldValues: CreateItemFieldValueDto[] = fields.map((f) => {
-      const val = formValues[f.id];
-      const dto: CreateItemFieldValueDto = { fieldId: f.id };
-      if (f.type === "Boolean") dto.booleanValue = !!val;
-      else if (f.type === "Numeric") dto.numericValue = val === "" ? undefined : Number(val);
-      else dto.textValue = val || "";
-      return dto;
-    });
-
-    try {
-      if (item) {
-        await itemsApi.updateItem(inventoryId, item.id, {
-          fieldValues,
-          rowVersion: item.rowVersion,
-        });
-      } else {
-        await itemsApi.createItem(inventoryId, { fieldValues });
-      }
-      onSuccess();
-    } catch (err: any) {
-      if (err.message?.includes("409")) {
-        setError("This item was modified by someone else. Please refresh and try again.");
-      } else {
-        setError(err.message || "Something went wrong");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateVal = (id: number, val: any) => {
-    setFormValues((prev) => ({ ...prev, [id]: val }));
-  };
-
-  return (
-    <div className="custom-modal-backdrop">
-      <div className="custom-modal-content p-4" style={{ maxWidth: "500px" }}>
-        <h3 className="m-0 h4 fw-bold mb-4">
-          {item ? "Edit Item" : "Add New Item"}
-        </h3>
-
-        {error && <ErrorAlert message={error} onDismiss={() => setError(null)} />}
-
-        <form onSubmit={handleSubmit}>
-          {fields.map((f) => (
-            <div key={f.id} className="mb-3">
-              <label className="form-label">{f.title}</label>
-              {f.type === "Boolean" ? (
-                <div className="form-check form-switch">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={!!formValues[f.id]}
-                    onChange={(e) => updateVal(f.id, e.target.checked)}
-                    disabled={loading}
-                  />
-                </div>
-              ) : f.type === "MultiLineText" ? (
-                <textarea
-                  className="form-control"
-                  rows={3}
-                  value={formValues[f.id] || ""}
-                  onChange={(e) => updateVal(f.id, e.target.value)}
-                  disabled={loading}
-                />
-              ) : f.type === "Numeric" ? (
-                <input
-                  type="number"
-                  className="form-control"
-                  value={formValues[f.id] ?? ""}
-                  onChange={(e) => updateVal(f.id, e.target.value)}
-                  disabled={loading}
-                />
-              ) : (
-                <input
-                  type={f.type === "Link" ? "url" : "text"}
-                  className="form-control"
-                  value={formValues[f.id] || ""}
-                  onChange={(e) => updateVal(f.id, e.target.value)}
-                  disabled={loading}
-                />
-              )}
-              {f.description && (
-                <div className="form-text">{f.description}</div>
-              )}
-              {f.type === "Link" && formValues[f.id] && (
-                <div className="mt-1">
-                  <a
-                    href={formValues[f.id]}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-decoration-none small"
-                  >
-                    Visit link →
-                  </a>
-                </div>
-              )}
-            </div>
-          ))}
-
-          <div className="d-flex justify-content-end gap-2 mt-4">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? "..." : item ? "Update" : "Create"}
-            </button>
-          </div>
-        </form>
-      </div>
     </div>
   );
 };

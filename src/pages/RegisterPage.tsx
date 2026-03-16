@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { authApi } from "../api/auth.api";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import ErrorAlert from "../components/common/ErrorAlert";
 import "../styles/RegisterPage.css";
 

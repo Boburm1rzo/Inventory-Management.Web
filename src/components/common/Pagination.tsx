@@ -11,10 +11,9 @@ import "../../styles/Pagination.css";
 const Pagination: React.FC<Props> = ({ page, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
 
-  // Simple logic for max 5 pages display
   const getPages = () => {
     let start = Math.max(1, page - 2);
-    let end = Math.min(totalPages, start + 4);
+    const end = Math.min(totalPages, start + 4);
     if (end - start < 4) start = Math.max(1, end - 4);
 
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);

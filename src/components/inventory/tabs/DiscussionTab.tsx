@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../hooks/useAuth";
 import { postsApi } from "../../../api/posts.api";
 import type { PostDto, CreatePostDto } from "../../../types";
 import ErrorAlert from "../../common/ErrorAlert";
@@ -28,19 +28,7 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
   const connectionRef = useRef<signalR.HubConnection | null>(null);
   const postsEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetchPosts();
-    setupSignalR();
-    return () => {
-      cleanupSignalR();
-    };
-  }, [inventoryId]);
-
-  useEffect(() => {
-    postsEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [posts]);
-
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
       const data = await postsApi.getPosts(inventoryId);
@@ -50,41 +38,54 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [inventoryId]);
 
-  const setupSignalR = async () => {
+  const setupSignalR = useCallback(async () => {
+    // ← qo'shildi: allaqachon connection bor bo'lsa qaytish
+    if (connectionRef.current) return;
+
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
 
+      const baseUrl = (import.meta.env.VITE_API_BASE_URL as string).replace(
+        "/api",
+        "",
+      );
+
       const connection = new signalR.HubConnectionBuilder()
-        .withUrl(`${import.meta.env.VITE_API_URL}/hubs/discussion`, {
+        .withUrl(`${baseUrl}/hubs/discussion`, {
           accessTokenFactory: () => token,
         })
         .withAutomaticReconnect()
         .build();
+
+      // ← ref ga OLDIN yozish — race condition oldini olish
+      connectionRef.current = connection;
 
       connection.onclose(() => setConnectionStatus("disconnected"));
       connection.onreconnecting(() => setConnectionStatus("reconnecting"));
       connection.onreconnected(() => setConnectionStatus("connected"));
 
       connection.on("NewPost", (post: PostDto) => {
-        setPosts((prev) => [...prev, post]);
+        setPosts((prev) => {
+          // ← duplicate oldini olish
+          if (prev.some((p) => p.id === post.id)) return prev;
+          return [...prev, post];
+        });
       });
 
       await connection.start();
       setConnectionStatus("connected");
-
       await connection.invoke("JoinInventory", inventoryId.toString());
-
-      connectionRef.current = connection;
     } catch (err: unknown) {
+      connectionRef.current = null;
       console.error("SignalR connection error:", err);
       setConnectionStatus("disconnected");
     }
-  };
+  }, [inventoryId]);
 
-  const cleanupSignalR = async () => {
+  const cleanupSignalR = useCallback(async () => {
     if (connectionRef.current) {
       try {
         await connectionRef.current.invoke(
@@ -97,7 +98,15 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
       }
       connectionRef.current = null;
     }
-  };
+  }, [inventoryId]);
+
+  useEffect(() => {
+    fetchPosts();
+    setupSignalR();
+    return () => {
+      cleanupSignalR();
+    };
+  }, [fetchPosts, setupSignalR, cleanupSignalR]);
 
   const handleSubmitPost = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -222,7 +231,8 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
                         .join("")
                         .toUpperCase()
                         .slice(0, 2)}
-                    </div>                  )}
+                    </div>
+                  )}
                   <div style={{ flex: 1 }}>
                     <div
                       style={{

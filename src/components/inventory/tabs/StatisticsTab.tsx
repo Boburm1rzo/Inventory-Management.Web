@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   AreaChart,
   Area,
@@ -15,19 +15,23 @@ interface StatisticsTabProps {
 }
 
 const StatisticsTab: React.FC<StatisticsTabProps> = ({ inventoryId }) => {
-  // Mock data as specified in Step 8
-  const mockData = Array.from({ length: 14 }, (_, i) => ({
-    date: new Date(Date.now() - (13 - i) * 86400000).toLocaleDateString("en", {
-      month: "short",
-      day: "numeric",
-    }),
-    count: Math.floor(Math.random() * 5),
-  }));
+  // Mock data generation moved to useMemo to be pure during render
+  const mockData = useMemo(() => {
+    return Array.from({ length: 14 }, (_, i) => ({
+      date: new Date(Date.now() - (13 - i) * 86400000).toLocaleDateString("en", {
+        month: "short",
+        day: "numeric",
+      }),
+      count: Math.floor(Math.random() * 5),
+    }));
+  }, []);
 
-  const stats = {
-    totalItems: 45, // Mock
-    totalLikes: 128, // Mock
-  };
+  const stats = useMemo(() => {
+    return {
+      totalItems: 45 + (inventoryId % 10), // Mock
+      totalLikes: 128, // Mock
+    };
+  }, [inventoryId]);
 
   return (
     <div className="statistics-tab">

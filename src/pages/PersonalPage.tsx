@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Package, ClipboardList, Heart, Plus } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { personalApi } from "../api/personal.api";
 import type { PersonalStatsDto } from "../types";
 import LoadingSpinner from "../components/common/LoadingSpinner";

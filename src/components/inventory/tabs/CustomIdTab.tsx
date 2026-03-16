@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import {
   DndContext,
@@ -231,33 +231,33 @@ const CustomIdTab: React.FC<CustomIdTabProps> = ({ inventoryId, canEdit }) => {
     }),
   );
 
-  useEffect(() => {
-    loadParts();
-    loadPreview();
-  }, [inventoryId]);
-
-  const loadParts = async () => {
+  const loadParts = useCallback(async () => {
     try {
       const data = await getIdFormatParts(inventoryId);
       setParts(data);
-    } catch (err) {
+    } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Something went wrong";
       setError(message);
     }
-  };
+  }, [inventoryId]);
 
-  const loadPreview = async () => {
+  const loadPreview = useCallback(async () => {
     try {
       setLoading(true);
       const data = await previewId(inventoryId);
       setPreview(data);
-    } catch (err) {
+    } catch {
       // Ignore preview errors
     } finally {
       setLoading(false);
     }
-  };
+  }, [inventoryId]);
+
+  useEffect(() => {
+    loadParts();
+    loadPreview();
+  }, [loadParts, loadPreview]);
 
   const handleAddPart = async (type: IdFormatPartType) => {
     const dto: CreateIdFormatPartDto = { type };

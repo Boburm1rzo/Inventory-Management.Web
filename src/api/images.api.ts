@@ -11,7 +11,7 @@ export async function uploadImage(file: File): Promise<string> {
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    }
+    },
   );
 
   return response.data.url;

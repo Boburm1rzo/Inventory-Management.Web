@@ -20,6 +20,11 @@ interface Props {
   editInventory?: InventoryDto | null;
 }
 
+interface TagOption {
+  value: string;
+  label: string;
+}
+
 const InventoryFormModal: React.FC<Props> = ({
   isOpen,
   onClose,
@@ -54,7 +59,7 @@ const InventoryFormModal: React.FC<Props> = ({
           ]);
           setCategories(catRes);
           setAvailableTags(tagRes);
-        } catch (err: any) {
+        } catch {
           setError(t("errors.network", "Failed to load categories/tags"));
         } finally {
           setInitialLoading(false);
@@ -113,8 +118,8 @@ const InventoryFormModal: React.FC<Props> = ({
       }
       onSuccess();
       onClose();
-    } catch (err: any) {
-      setError(err.message || t("errors.general", "Xatolik yuz berdi"));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : t("errors.general", "Xatolik yuz berdi"));
     } finally {
       setLoading(false);
     }
@@ -123,7 +128,7 @@ const InventoryFormModal: React.FC<Props> = ({
   const tagOptions = availableTags.map((t) => ({ value: t.name, label: t.name }));
   const selectedTags = formData.tags.map((tag) => ({ value: tag, label: tag }));
 
-  const customSelectStyles: StylesConfig<any, true> = {
+  const customSelectStyles: StylesConfig<TagOption, true> = {
     control: (base) => ({
       ...base,
       backgroundColor: "var(--bg-primary)",
@@ -257,7 +262,7 @@ const InventoryFormModal: React.FC<Props> = ({
                 onChange={(selected) => {
                   setFormData({
                     ...formData,
-                    tags: selected ? (selected as any[]).map((opt) => opt.value) : [],
+                    tags: selected ? selected.map((opt) => opt.value) : [],
                   });
                 }}
                 styles={customSelectStyles}

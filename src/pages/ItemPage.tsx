@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { itemsApi } from "../api/items.api";
-import type { Item, CreateItemDto } from "../types";
+import { getFields } from "../api/fields.api";
+import type { ItemDto, InventoryFieldDto } from "../types";
 import ItemForm from "../components/item/ItemForm";
 import ConfirmModal from "../components/common/ConfirmModal";
 import LoadingSpinner from "../components/common/LoadingSpinner";
@@ -19,8 +20,9 @@ const ItemPage: React.FC = () => {
   }>();
   const navigate = useNavigate();
 
-  const [item, setItem] = useState<Item | null>(null);
-  const [loading, setLoading] = useState(itemId !== "new");
+  const [item, setItem] = useState<ItemDto | null>(null);
+  const [fields, setFields] = useState<InventoryFieldDto[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>(
     itemId === "new" ? "edit" : "details",
@@ -30,45 +32,24 @@ const ItemPage: React.FC = () => {
   const isCreate = itemId === "new";
 
   useEffect(() => {
-    if (inventoryId && itemId && itemId !== "new") {
-      fetchItem(parseInt(inventoryId), parseInt(itemId));
+    if (inventoryId) {
+      fetchData(parseInt(inventoryId), itemId);
     }
   }, [inventoryId, itemId]);
 
-  const fetchItem = async (invId: number, itId: number) => {
+  const fetchData = async (invId: number, itId: string | undefined) => {
     try {
       setLoading(true);
-      const data = await itemsApi.getItemById(invId, itId);
-      setItem(data);
-    } catch (err: any) {
-      setError(err.message || "Network error");
+      const [fieldsData, itemData] = await Promise.all([
+        getFields(invId),
+        itId && itId !== "new" ? itemsApi.getItem(invId, parseInt(itId)) : Promise.resolve(null),
+      ]);
+      setFields(fieldsData);
+      setItem(itemData);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Network error");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCreateSubmit = async (data: CreateItemDto) => {
-    if (!inventoryId) return;
-    try {
-      const created = await itemsApi.createItem(parseInt(inventoryId), data);
-      navigate(`/inventories/${inventoryId}/items/${created.id}`);
-    } catch (err: any) {
-      setError(err.message || "Create failed");
-    }
-  };
-
-  const handleEditSubmit = async (data: any) => {
-    if (!item || !inventoryId) return;
-    try {
-      const updated = await itemsApi.updateItem(
-        parseInt(inventoryId),
-        item.id,
-        data,
-      );
-      setItem(updated);
-      setActiveTab("details");
-    } catch (err: any) {
-      setError(err.message || "Update failed");
     }
   };
 
@@ -77,8 +58,8 @@ const ItemPage: React.FC = () => {
     try {
       await itemsApi.deleteItem(parseInt(inventoryId), item.id);
       navigate(`/inventories/${inventoryId}`);
-    } catch (err: any) {
-      setError(err.message || "Delete failed");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Delete failed");
     }
   };
 
@@ -88,9 +69,9 @@ const ItemPage: React.FC = () => {
     return <ErrorAlert message={t("items.notFound", "Item not found")} />;
 
   return (
-    <div className="item-page">
+    <div className="item-page container py-4">
       <div className="d-flex align-items-center justify-content-between mb-4">
-        <h1 className="m-0">
+        <h1 className="m-0 h2">
           {isCreate
             ? t("items.createTitle", "Create New Item")
             : t("items.pageTitle", "Item: {{customId}}", {
@@ -101,15 +82,15 @@ const ItemPage: React.FC = () => {
       </div>
 
       {!isCreate && (
-        <div className="tabs">
+        <div className="nav nav-tabs mb-4">
           <button
-            className={activeTab === "details" ? "active" : ""}
+            className={`nav-link ${activeTab === "details" ? "active" : ""}`}
             onClick={() => setActiveTab("details")}
           >
             {t("items.tabs.details", "Details")}
           </button>
           <button
-            className={activeTab === "edit" ? "active" : ""}
+            className={`nav-link ${activeTab === "edit" ? "active" : ""}`}
             onClick={() => setActiveTab("edit")}
           >
             {t("items.tabs.edit", "Edit")}
@@ -118,89 +99,84 @@ const ItemPage: React.FC = () => {
       )}
 
       {!isCreate && activeTab === "details" && item && (
-        <div className="item-details">
-          <p>
-            <strong>{t("items.customId", "Custom ID")}:</strong> {item.customId}
-          </p>
-          <p>
-            <strong>{t("items.tags", "Tags")}:</strong>{" "}
-            {(item.tags || []).join(", ")}
-          </p>
-          <p>
-            <strong>{t("items.createdAt", "Created")}:</strong>{" "}
-            {new Date(item.createdAt).toLocaleString()}
-          </p>
-          <p>
-            <strong>{t("items.updatedAt", "Updated")}:</strong>{" "}
-            {new Date(item.updatedAt).toLocaleString()}
-          </p>
+        <div className="card shadow-sm">
+          <div className="card-body">
+            <div className="row mb-4">
+              <div className="col-md-6">
+                <p className="mb-1 text-muted small">{t("items.customId", "Custom ID")}</p>
+                <p className="fw-bold">{item.customId}</p>
+              </div>
+              <div className="col-md-6">
+                <p className="mb-1 text-muted small">{t("items.createdBy", "Created By")}</p>
+                <p className="fw-bold">{item.createdByName}</p>
+              </div>
+              <div className="col-md-6">
+                <p className="mb-1 text-muted small">{t("items.createdAt", "Created At")}</p>
+                <p className="fw-bold">{new Date(item.createdAt).toLocaleString()}</p>
+              </div>
+              <div className="col-md-6">
+                <p className="mb-1 text-muted small">{t("items.updatedAt", "Updated At")}</p>
+                <p className="fw-bold">{new Date(item.updatedAt).toLocaleString()}</p>
+              </div>
+            </div>
 
-          <h3>{t("items.customFields", "Custom Fields")}</h3>
-          <div>
-            {(item.customFields?.strings || []).map(
-              (str, i) =>
-                str && (
-                  <p key={i}>
-                    String {i + 1}: {str}
+            <h3 className="h5 border-bottom pb-2 mb-3">{t("items.customFields", "Custom Fields")}</h3>
+            <div className="row">
+              {item.fieldValues.map((fv) => (
+                <div key={fv.fieldId} className="col-md-6 mb-3">
+                  <p className="mb-1 text-muted small">{fv.fieldTitle}</p>
+                  <p className="fw-medium">
+                    {fv.fieldType === "Boolean" ? (
+                      fv.booleanValue ? "Yes" : "No"
+                    ) : fv.fieldType === "Numeric" ? (
+                      fv.numericValue
+                    ) : fv.fieldType === "Link" ? (
+                      <a href={fv.textValue} target="_blank" rel="noopener noreferrer">
+                        {fv.textValue}
+                      </a>
+                    ) : (
+                      fv.textValue || "—"
+                    )}
                   </p>
-                ),
-            )}
-            {(item.customFields?.texts || []).map(
-              (txt, i) =>
-                txt && (
-                  <p key={i}>
-                    Text {i + 1}: {txt}
-                  </p>
-                ),
-            )}
-            {(item.customFields?.numbers || []).map(
-              (num, i) =>
-                num !== 0 && (
-                  <p key={i}>
-                    Number {i + 1}: {num}
-                  </p>
-                ),
-            )}
-            {(item.customFields?.links || []).map(
-              (link, i) =>
-                link && (
-                  <p key={i}>
-                    Link {i + 1}:{" "}
-                    <a href={link} target="_blank" rel="noopener noreferrer">
-                      {link}
-                    </a>
-                  </p>
-                ),
-            )}
-            {(item.customFields?.booleans || []).map((bool, i) => (
-              <p key={i}>
-                Boolean {i + 1}: {bool ? "Yes" : "No"}
-              </p>
-            ))}
-          </div>
+                </div>
+              ))}
+            </div>
 
-          <div className="actions">
-            <button onClick={() => setActiveTab("edit")}>
-              {t("common.edit", "Edit")}
-            </button>
-            <button onClick={() => setShowDeleteModal(true)} className="danger">
-              {t("common.delete", "Delete")}
-            </button>
+            <div className="d-flex gap-2 mt-4 pt-3 border-top">
+              <button className="btn btn-primary" onClick={() => setActiveTab("edit")}>
+                {t("common.edit", "Edit")}
+              </button>
+              <button className="btn btn-outline-danger" onClick={() => setShowDeleteModal(true)}>
+                {t("common.delete", "Delete")}
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {(isCreate || activeTab === "edit") && (
-        <ItemForm
-          isEdit={!isCreate}
-          initialData={item || undefined}
-          onSubmit={isCreate ? handleCreateSubmit : handleEditSubmit}
-          onCancel={
-            isCreate
-              ? () => navigate(`/inventories/${inventoryId}`)
-              : () => setActiveTab("details")
-          }
-        />
+      {(isCreate || activeTab === "edit") && inventoryId && (
+        <div className="card shadow-sm">
+          <div className="card-body">
+            <ItemForm
+              inventoryId={parseInt(inventoryId)}
+              fields={fields}
+              item={item}
+              onSuccess={() => {
+                if (isCreate) {
+                  navigate(`/inventories/${inventoryId}`);
+                } else {
+                  fetchData(parseInt(inventoryId), itemId);
+                  setActiveTab("details");
+                }
+              }}
+              onCancel={
+                isCreate
+                  ? () => navigate(`/inventories/${inventoryId}`)
+                  : () => setActiveTab("details")
+              }
+            />
+          </div>
+        </div>
       )}
 
       {!isCreate && (
