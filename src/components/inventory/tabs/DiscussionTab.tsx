@@ -32,7 +32,12 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
       setLoading(true);
       const data = await postsApi.getPosts(inventoryId);
       // Sort newest first
-      setPosts(data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      setPosts(
+        data.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        ),
+      );
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -40,60 +45,71 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
     }
   }, [inventoryId]);
 
-  const setupSignalR = useCallback(async (isMounted: () => boolean) => {
-    if (connectionRef.current) return;
+  const setupSignalR = useCallback(
+    async (isMounted: () => boolean) => {
+      if (connectionRef.current) return;
 
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
 
-      const baseUrl = (import.meta.env.VITE_API_BASE_URL as string).replace("/api", "");
+        const baseUrl = (import.meta.env.VITE_API_BASE_URL as string).replace(
+          "/api",
+          "",
+        );
+        const hubUrl = `${baseUrl}/hubs/discussion`;
+        console.log("SignalR Hub URL:", hubUrl);
 
-      const connection = new signalR.HubConnectionBuilder()
-        .withUrl(`${baseUrl}/hubs/discussion`, {
-          accessTokenFactory: () => token,
-        })
-        .withAutomaticReconnect()
-        .build();
+        const connection = new signalR.HubConnectionBuilder()
+          .withUrl(hubUrl, {
+            accessTokenFactory: () => token,
+          })
+          .withAutomaticReconnect()
+          .build();
 
-      connectionRef.current = connection;
+        connectionRef.current = connection;
 
-      connection.onclose(() => {
-        if (isMounted()) setConnectionStatus("disconnected");
-      });
-      connection.onreconnecting(() => {
-        if (isMounted()) setConnectionStatus("reconnecting");
-      });
-      connection.onreconnected(() => {
-        if (isMounted()) setConnectionStatus("connected");
-      });
-
-      connection.on("NewPost", (post: PostDto) => {
-        setPosts((prev) => {
-          if (prev.some((p) => p.id === post.id)) return prev;
-          return [post, ...prev]; // New posts at the top
+        connection.onclose(() => {
+          if (isMounted()) setConnectionStatus("disconnected");
         });
-      });
+        connection.onreconnecting(() => {
+          if (isMounted()) setConnectionStatus("reconnecting");
+        });
+        connection.onreconnected(() => {
+          if (isMounted()) setConnectionStatus("connected");
+        });
 
-      await connection.start();
-      
-      if (!isMounted()) {
-        await connection.stop();
-        return;
-      }
+        connection.on("NewPost", (post: PostDto) => {
+          setPosts((prev) => {
+            if (prev.some((p) => p.id === post.id)) return prev;
+            return [post, ...prev]; // New posts at the top
+          });
+        });
 
-      setConnectionStatus("connected");
-      await connection.invoke("JoinInventory", inventoryId.toString());
-    } catch (err: any) {
-      connectionRef.current = null;
-      // Suppress "stopped during negotiation" or abort errors as they are expected during navigation
-      if (err.name === "AbortError" || err.message?.includes("stopped during negotiation")) {
-        return;
+        await connection.start();
+
+        if (!isMounted()) {
+          await connection.stop();
+          return;
+        }
+
+        setConnectionStatus("connected");
+        await connection.invoke("JoinInventory", inventoryId.toString());
+      } catch (err: any) {
+        connectionRef.current = null;
+        // Suppress "stopped during negotiation" or abort errors as they are expected during navigation
+        if (
+          err.name === "AbortError" ||
+          err.message?.includes("stopped during negotiation")
+        ) {
+          return;
+        }
+        console.error("SignalR connection error:", err);
+        if (isMounted()) setConnectionStatus("disconnected");
       }
-      console.error("SignalR connection error:", err);
-      if (isMounted()) setConnectionStatus("disconnected");
-    }
-  }, [inventoryId]);
+    },
+    [inventoryId],
+  );
 
   const cleanupSignalR = useCallback(async () => {
     const connection = connectionRef.current;
@@ -116,7 +132,7 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
 
     fetchPosts();
     setupSignalR(isMounted);
-    
+
     return () => {
       mounted = false;
       cleanupSignalR();
@@ -131,7 +147,9 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
       setIsSubmitting(true);
       const dto: CreatePostDto = { content: newPostContent.trim() };
       const newPost = await postsApi.createPost(inventoryId, dto);
-      setPosts(prev => prev.some(p => p.id === newPost.id) ? prev : [newPost, ...prev]);
+      setPosts((prev) =>
+        prev.some((p) => p.id === newPost.id) ? prev : [newPost, ...prev],
+      );
       setNewPostContent("");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -160,11 +178,11 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
       connected: "green",
       reconnecting: "orange",
       disconnected: "red",
-      connecting: "gray"
+      connecting: "gray",
     };
     const color = statusColors[connectionStatus] || "gray";
     const label = t(`discussion.${connectionStatus}`, connectionStatus);
-    
+
     return (
       <span style={{ color, fontSize: "0.75rem", fontWeight: "600" }}>
         ● {label.charAt(0).toUpperCase() + label.slice(1)}
@@ -201,12 +219,18 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
               </button>
             </div>
             <div className="form-hint">
-              {t("discussion.markdownSupported", "Markdown supported. Ctrl+Enter to post.")}
+              {t(
+                "discussion.markdownSupported",
+                "Markdown supported. Ctrl+Enter to post.",
+              )}
             </div>
           </form>
         ) : (
           <div className="login-hint">
-            {t("discussion.loginRequired", "Please login to join the discussion")}
+            {t(
+              "discussion.loginRequired",
+              "Please login to join the discussion",
+            )}
           </div>
         )}
       </div>
@@ -222,22 +246,34 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
               <div key={post.id} className="post-card">
                 <div className="post-layout">
                   {post.avatarUrl ? (
-                    <img src={post.avatarUrl} alt={post.authorName} className="avatar" />
+                    <img
+                      src={post.avatarUrl}
+                      alt={post.authorName}
+                      className="avatar"
+                    />
                   ) : (
                     <div className="avatar-initials">
-                      {(post.authorName || "?").split(" ").map(n => n?.[0]).join("").toUpperCase().slice(0, 2)}
+                      {(post.authorName || "?")
+                        .split(" ")
+                        .map((n) => n?.[0])
+                        .join("")
+                        .toUpperCase()
+                        .slice(0, 2)}
                     </div>
                   )}
                   <div className="post-content-area">
                     <div className="post-meta">
                       <span className="author-name">{post.authorName}</span>
-                      <span className="post-time">{timeAgo(post.createdAt)}</span>
+                      <span className="post-time">
+                        {timeAgo(post.createdAt)}
+                      </span>
                     </div>
                     <div className="post-text">
                       <ReactMarkdown>{post.content}</ReactMarkdown>
                     </div>
                   </div>
-                  {(user?.displayName === post.authorName || user?.roles?.includes("Admin")) && (
+                  {(user?.displayName === post.authorName ||
+                    user?.roles?.includes("Admin")) && (
                     <button
                       onClick={() => handleDeletePost(post.id)}
                       className="delete-post-btn"
@@ -252,7 +288,6 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
           </div>
         )}
       </div>
-
 
       {error && <ErrorAlert message={error} onDismiss={() => setError(null)} />}
 
