@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../hooks/useAuth";
 import { inventoriesApi } from "../api/inventories.api";
 import type { InventoryListItemDto } from "../types";
 import InventoryTable from "../components/inventory/InventoryTable";
@@ -46,7 +45,10 @@ const HomePage: React.FC = () => {
           {t("home.hero.title", "Manage everything, effortlessly.")}
         </h1>
         <p className="hero-subtitle mb-4">
-          {t("home.hero.subtitle", "A modern, lightning-fast platform to track your assets, collaborate with your team, and stay organized.")}
+          {t(
+            "home.hero.subtitle",
+            "A modern, lightning-fast platform to track your assets, collaborate with your team, and stay organized.",
+          )}
         </p>
         <div className="d-flex justify-content-center gap-3">
           <Link to="/inventories" className="btn-primary-custom">
