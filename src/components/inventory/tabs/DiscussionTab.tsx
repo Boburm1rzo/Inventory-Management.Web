@@ -54,9 +54,10 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
         if (!token) return;
 
         const baseUrl = (import.meta.env.VITE_API_BASE_URL as string).replace(
-          "/api",
+          /\/api\/?$/,
           "",
         );
+
         const hubUrl = `${baseUrl}/hubs/discussion`;
         console.log("SignalR Hub URL:", hubUrl);
 
