@@ -1,7 +1,8 @@
 {
-  "nav": { "home": "Home", "inventories": "Inventories", "login": "Login", "register": "Register", "logout": "Logout", "profile": "Profile" },
+  "nav": { "home": "Home", "inventories": "Inventories", "login": "Login", "register": "Register", "logout": "Logout", "profile": "Profile", "myPage": "My Page", "adminPanel": "Admin Panel" },
   "auth": { "loginTitle": "Welcome back", "registerTitle": "Create account", "email": "Email", "password": "Password", "displayName": "Display Name", "loginBtn": "Sign in", "registerBtn": "Create account", "noAccount": "Don't have an account?", "hasAccount": "Already have an account?", "googleBtn": "Continue with Google", "facebookBtn": "Continue with Facebook", "orDivider": "or continue with" },
   "home": { 
+    "viewAll": "View all",
     "hero": {
       "title": "Manage everything, effortlessly.",
       "subtitle": "A modern, lightning-fast platform to track your assets, collaborate with your team, and stay organized.",
@@ -114,7 +115,7 @@
   },
   "form": { "inventoryTitle": "Title", "description": "Description", "category": "Category", "isPublic": "Public inventory", "imageUrl": "Image URL", "save": "Save", "cancel": "Cancel", "create": "Create", "titlePlaceholder": "Enter inventory title" },
   "errors": { "general": "Something went wrong", "network": "Connection error. Please try again.", "unauthorized": "Please log in to continue.", "forbidden": "You don't have permission.", "conflict": "Someone else modified this record. Please reload.", "notFound": "Not found.", "required": "This field is required." },
-  "common": { "loading": "Loading...", "noData": "No data available", "actions": "Actions", "edit": "Edit", "delete": "Delete", "confirm": "Confirm", "close": "Close", "back": "Previous", "refresh": "Refresh", "add": "Add", "save": "Save", "select": "Select...", "page": "Page", "next": "Next" },
+  "common": { "loading": "Loading...", "noData": "No data available", "actions": "Actions", "edit": "Edit", "delete": "Delete", "confirm": "Confirm", "close": "Close", "back": "Previous", "refresh": "Refresh", "add": "Add", "save": "Save", "select": "Select...", "page": "Page", "next": "Next", "search": "Search..." },
   "theme": { "light": "Light", "dark": "Dark" },
   "items": {
     "title": "Items",

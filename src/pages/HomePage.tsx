@@ -10,7 +10,6 @@ import "../styles/HomePage.css";
 
 const HomePage: React.FC = () => {
   const { t } = useTranslation();
-  const { isAuthenticated } = useAuth();
 
   const [latest, setLatest] = useState<InventoryListItemDto[]>([]);
   const [top, setTop] = useState<InventoryListItemDto[]>([]);
@@ -68,7 +67,7 @@ const HomePage: React.FC = () => {
             to="/inventories"
             className="text-decoration-none fw-medium view-all"
           >
-            View all &rarr;
+            {t("home.viewAll", "View all")} &rarr;
           </Link>
         </div>
 

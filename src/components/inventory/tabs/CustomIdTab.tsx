@@ -30,6 +30,7 @@ import {
   previewId,
 } from "../../../api/idformat.api";
 import ConfirmModal from "../../common/ConfirmModal";
+import ErrorAlert from "../../common/ErrorAlert";
 
 interface CustomIdTabProps {
   inventoryId: number;
@@ -110,10 +111,11 @@ const PartCard: React.FC<PartCardProps> = ({
   };
 
   // Handle both string and numeric types from backend
-  const typeKey = typeof part.type === "number" 
-    ? INDEX_TO_TYPE[part.type as number] 
-    : (part.type as IdFormatPartType);
-    
+  const typeKey =
+    typeof part.type === "number"
+      ? INDEX_TO_TYPE[part.type as number]
+      : (part.type as IdFormatPartType);
+
   const config = PART_TYPE_CONFIG[typeKey] || PART_TYPE_CONFIG.FixedText;
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(part.config || "");
@@ -162,11 +164,18 @@ const PartCard: React.FC<PartCardProps> = ({
             autoFocus
           />
         ) : (
-          <span>{part.config || t(`inventory.customId.hints.${typeKey}`, config.description)}</span>
+          <span>
+            {part.config ||
+              t(`inventory.customId.hints.${typeKey}`, config.description)}
+          </span>
         )}
       </div>
       {canEdit && (
-        <button onClick={() => onDelete(part.id)} className="delete-btn" title={t("common.delete", "Delete")}>
+        <button
+          onClick={() => onDelete(part.id)}
+          className="delete-btn"
+          title={t("common.delete", "Delete")}
+        >
           ×
         </button>
       )}
@@ -285,8 +294,7 @@ const CustomIdTab: React.FC<CustomIdTabProps> = ({ inventoryId, canEdit }) => {
       setParts((prev) => [...prev, newPart]);
       await loadPreview();
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to add part";
+      const message = err instanceof Error ? err.message : "Failed to add part";
       setError(message);
     }
   };
@@ -332,26 +340,34 @@ const CustomIdTab: React.FC<CustomIdTabProps> = ({ inventoryId, canEdit }) => {
     }
   };
 
-  if (loading) return (
-    <div className="p-5 text-center text-muted">
-      <div className="spinner-border spinner-border-sm me-2"></div>
-      Loading configuration...
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="p-5 text-center text-muted">
+        <div className="spinner-border spinner-border-sm me-2"></div>
+        Loading configuration...
+      </div>
+    );
 
   return (
     <div className="custom-id-tab">
+      {error && <ErrorAlert message={error} onDismiss={() => setError(null)} />}
       <div className="preview-section card-style">
         <div className="section-title-box">
           <h3>{t("inventory.customId.preview", "Format Preview")}</h3>
-          <button onClick={loadPreview} className="refresh-icon-btn" title="Refresh Preview">
+          <button
+            onClick={loadPreview}
+            className="refresh-icon-btn"
+            title="Refresh Preview"
+          >
             🔄
           </button>
         </div>
         <div className="preview-box">
           <code>{preview || "--- No Parts Configured ---"}</code>
         </div>
-        <p className="preview-hint">This is how your item IDs will look when generated.</p>
+        <p className="preview-hint">
+          This is how your item IDs will look when generated.
+        </p>
       </div>
 
       <div className="parts-section card-style">
@@ -527,9 +543,9 @@ const CustomIdTab: React.FC<CustomIdTabProps> = ({ inventoryId, canEdit }) => {
         .add-label { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
         .add-desc { font-size: 0.75rem; color: var(--text-muted); }
       `,
-          }}
-        />
-      </div>
+        }}
+      />
+    </div>
   );
 };
 

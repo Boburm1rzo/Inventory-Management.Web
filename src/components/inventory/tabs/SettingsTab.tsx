@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Save, Trash2, ShieldAlert, Tag, Globe, Layers, Type, FileText, Image as ImageIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import {
+  Save,
+  Trash2,
+  ShieldAlert,
+  Tag,
+  Globe,
+  Layers,
+  Type,
+  FileText,
+  Image as ImageIcon,
+} from "lucide-react";
 import CreatableSelect from "react-select/creatable";
 import { inventoriesApi } from "../../../api/inventories.api";
 import type {
@@ -11,7 +22,6 @@ import type {
 import ImageUpload from "../../common/ImageUpload";
 import ErrorAlert from "../../common/ErrorAlert";
 import ConfirmModal from "../../common/ConfirmModal";
-import { useTheme } from "../../../hooks/useTheme";
 
 interface SettingsTabProps {
   inventoryId: number;
@@ -28,7 +38,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
   onUpdated,
   onDeleted,
 }) => {
-  const { theme } = useTheme();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<CreateInventoryDto>({
     title: inventory.title,
     description: inventory.description || "",
@@ -123,10 +133,10 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
     }),
     option: (base: any, state: any) => ({
       ...base,
-      backgroundColor: state.isFocused 
-        ? "var(--bg-secondary)" 
-        : state.isSelected 
-          ? "var(--accent)" 
+      backgroundColor: state.isFocused
+        ? "var(--bg-secondary)"
+        : state.isSelected
+          ? "var(--accent)"
           : "transparent",
       color: state.isSelected ? "white" : "var(--text-primary)",
       "&:active": {
@@ -376,22 +386,25 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             <Layers size={20} className="text-accent" />
             <h3>{t("inventory.settings.general", "General Configuration")}</h3>
           </div>
-          
+
           <div className="section-body">
             <div className="row g-4">
               <div className="col-lg-4">
                 <label className="form-label-custom">
-                  <ImageIcon size={16} /> {t("inventory.settings.cover", "Inventory Cover")}
+                  <ImageIcon size={16} />{" "}
+                  {t("inventory.settings.cover", "Inventory Cover")}
                 </label>
                 <div className="p-0">
                   <ImageUpload
                     value={formData.imageUrl}
-                    onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+                    onChange={(url) =>
+                      setFormData({ ...formData, imageUrl: url })
+                    }
                     disabled={!canEdit || loading}
                   />
                 </div>
               </div>
-              
+
               <div className="col-lg-8">
                 <div className="mb-4">
                   <label className="form-label-custom">
@@ -409,10 +422,11 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     required
                   />
                 </div>
-                
+
                 <div className="mb-0">
                   <label className="form-label-custom">
-                    <FileText size={16} /> {t("inventory.settings.description", "Description")}
+                    <FileText size={16} />{" "}
+                    {t("inventory.settings.description", "Description")}
                   </label>
                   <textarea
                     className="form-control-custom"
@@ -422,14 +436,18 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                       setFormData({ ...formData, description: e.target.value })
                     }
                     disabled={!canEdit || loading}
-                    placeholder={t("form.descriptionPlaceholder", "Briefly describe...")}
+                    placeholder={t(
+                      "form.descriptionPlaceholder",
+                      "Briefly describe...",
+                    )}
                   />
                 </div>
               </div>
-              
+
               <div className="col-md-6">
                 <label className="form-label-custom">
-                  <Globe size={16} /> {t("inventory.settings.category", "Category")}
+                  <Globe size={16} />{" "}
+                  {t("inventory.settings.category", "Category")}
                 </label>
                 <select
                   className="form-select-custom"
@@ -450,19 +468,26 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                   ))}
                 </select>
               </div>
-              
+
               <div className="col-md-6">
                 <label className="form-label-custom">
-                  <Globe size={16} /> {t("inventory.settings.visibility", "Visibility")}
+                  <Globe size={16} />{" "}
+                  {t("inventory.settings.visibility", "Visibility")}
                 </label>
                 <div className="visibility-toggle">
                   <span className="fs-14 fw-500 text-primary">
-                    {formData.isPublic ? t("inventory.settings.public", "Public Inventory") : t("inventory.settings.private", "Private Inventory")}
+                    {formData.isPublic
+                      ? t("inventory.settings.public", "Public Inventory")
+                      : t("inventory.settings.private", "Private Inventory")}
                   </span>
                   <div className="form-check form-switch p-0 m-0">
                     <input
                       className="form-check-input ms-0"
-                      style={{ cursor: 'pointer', width: '2.5rem', height: '1.25rem' }}
+                      style={{
+                        cursor: "pointer",
+                        width: "2.5rem",
+                        height: "1.25rem",
+                      }}
                       type="checkbox"
                       checked={formData.isPublic}
                       onChange={(e) =>
@@ -476,7 +501,8 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
 
               <div className="col-12">
                 <label className="form-label-custom">
-                  <Tag size={16} /> {t("inventory.settings.tags", "Keywords & Tags")}
+                  <Tag size={16} />{" "}
+                  {t("inventory.settings.tags", "Keywords & Tags")}
                 </label>
                 <CreatableSelect
                   isMulti
@@ -492,7 +518,10 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     });
                   }}
                   isDisabled={!canEdit || loading}
-                  placeholder={t("inventory.settings.tagsPlaceholder", "Type to search...")}
+                  placeholder={t(
+                    "inventory.settings.tagsPlaceholder",
+                    "Type to search...",
+                  )}
                 />
               </div>
 
@@ -504,7 +533,11 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     disabled={loading}
                   >
                     {loading ? (
-                      <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      <span
+                        className="spinner-border spinner-border-sm"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
                     ) : (
                       <Save size={18} />
                     )}
@@ -525,9 +558,17 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             <div className="section-body">
               <div className="danger-content">
                 <div className="danger-text">
-                  <h4>{t("inventory.settings.deleteTitle", "Delete this inventory")}</h4>
+                  <h4>
+                    {t(
+                      "inventory.settings.deleteTitle",
+                      "Delete this inventory",
+                    )}
+                  </h4>
                   <p>
-                    {t("inventory.settings.deleteDesc", "Once you delete an inventory, all data will be permanently removed.")}
+                    {t(
+                      "inventory.settings.deleteDesc",
+                      "Once you delete an inventory, all data will be permanently removed.",
+                    )}
                   </p>
                 </div>
                 <button
@@ -536,7 +577,8 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                   onClick={() => setShowDeleteConfirm(true)}
                   disabled={loading}
                 >
-                  <Trash2 size={18} /> {t("inventory.settings.deleteBtn", "Delete Permanently")}
+                  <Trash2 size={18} />{" "}
+                  {t("inventory.settings.deleteBtn", "Delete Permanently")}
                 </button>
               </div>
             </div>
@@ -547,7 +589,10 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
       <ConfirmModal
         isOpen={showDeleteConfirm}
         title={t("inventories.deleteConfirm", "Delete Inventory")}
-        message={t("inventory.settings.deleteDesc", "Are you sure? All items will be removed.")}
+        message={t(
+          "inventory.settings.deleteDesc",
+          "Are you sure? All items will be removed.",
+        )}
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteConfirm(false)}
       />

@@ -176,13 +176,13 @@ export interface ReorderFieldsDto {
 
 export interface InventoryIdFormatPartDto {
   id: number;
-  type: IdFormatPartType;
+  type: IdFormatPartType | number;
   order: number;
   config?: string;
 }
 
 export interface CreateIdFormatPartDto {
-  type: IdFormatPartType;
+  type: IdFormatPartType | number;
   config?: string;
 }
 

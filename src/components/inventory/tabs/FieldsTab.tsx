@@ -36,7 +36,6 @@ import ErrorAlert from "../../common/ErrorAlert";
 import {
   Edit2,
   Trash2,
-  Plus,
   GripVertical,
 } from "lucide-react";
 

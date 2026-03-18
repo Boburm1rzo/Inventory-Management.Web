@@ -1,7 +1,8 @@
 {
-  "nav": { "home": "Bosh sahifa", "inventories": "Inventarlar", "login": "Kirish", "register": "Ro'yxatdan o'tish", "logout": "Chiqish", "profile": "Profil" },
+  "nav": { "home": "Bosh sahifa", "inventories": "Inventarlar", "login": "Kirish", "register": "Ro'yxatdan o'tish", "logout": "Chiqish", "profile": "Profil", "myPage": "Mening sahifam", "adminPanel": "Admin panel" },
   "auth": { "loginTitle": "Xush kelibsiz", "registerTitle": "Hisob yaratish", "email": "Email", "password": "Parol", "displayName": "Ism", "loginBtn": "Kirish", "registerBtn": "Hisob yaratish", "noAccount": "Hisobingiz yo'qmi?", "hasAccount": "Hisobingiz bormi?", "googleBtn": "Google bilan davom etish", "facebookBtn": "Facebook bilan davom etish", "orDivider": "yoki quyidagilar orqali" },
   "home": { 
+    "viewAll": "Hammasini ko'rish",
     "hero": {
       "title": "Hammasini oson boshqaring.",
       "subtitle": "Aktivlaringizni kuzatish, jamoangiz bilan hamkorlik qilish va tartibli bo'lish uchun zamonaviy, tezkor platforma.",

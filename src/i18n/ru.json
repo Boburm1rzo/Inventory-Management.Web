@@ -1,0 +1,140 @@
+{
+  "nav": { "home": "Главная", "inventories": "Инвентари", "login": "Вход", "register": "Регистрация", "logout": "Выход", "profile": "Профиль", "myPage": "Моя страница", "adminPanel": "Админ панель" },
+  "auth": { "loginTitle": "С возвращением", "registerTitle": "Создать аккаунт", "email": "Электронная почта", "password": "Пароль", "displayName": "Имя пользователя", "loginBtn": "Войти", "registerBtn": "Создать аккаунт", "noAccount": "Нет аккаунта?", "hasAccount": "Уже есть аккаунт?", "googleBtn": "Продолжить через Google", "facebookBtn": "Продолжить через Facebook", "orDivider": "или продолжите через" },
+  "home": { 
+    "viewAll": "Посмотреть все",
+    "hero": {
+      "title": "Управляйте всем без усилий.",
+      "subtitle": "Современная, молниеносная платформа для отслеживания ваших активов, совместной работы и порядка.",
+      "browseBtn": "Просмотреть инвентари"
+    },
+    "latestTitle": "Последние инвентари", "topTitle": "Самые популярные", "columns": { "title": "Название", "category": "Категория", "owner": "Владелец", "createdAt": "Создано", "itemCount": "Предметы" } },
+  "inventories": { 
+    "title": "Инвентари", 
+    "createBtn": "Создать новый", 
+    "columns": { "title": "Название", "category": "Категория", "owner": "Владелец", "createdAt": "Создано" }, 
+    "empty": "Инвентарей пока нет", 
+    "deleteConfirm": "Вы уверены, что хотите удалить этот инвентарь?" 
+  },
+  "inventory": {
+    "by": "Автор:",
+    "public": "Публичный",
+    "notFound": "Инвентарь не найден",
+    "tabs": {
+      "items": "Предметы",
+      "fields": "Поля",
+      "custom-id": "ID Формат",
+      "settings": "Настройки",
+      "discussion": "Обсуждение",
+      "access": "Доступ",
+      "statistics": "Статистика"
+    },
+    "fields": {
+      "title": "Дополнительные поля",
+      "addField": "Добавить поле",
+      "editField": "Изменить поле",
+      "titleLabel": "Название",
+      "descriptionLabel": "Описание",
+      "typeLabel": "Тип",
+      "displayInTable": "Показывать в таблице",
+      "textFieldsUsed": "Текстовые поля: {{count}}/{{max}} использовано",
+      "titlePlaceholder": "Введите название поля",
+      "descriptionPlaceholder": "Необязательное описание",
+      "confirmDelete": "Удалить поле",
+      "confirmDeleteMessage": "Вы уверены, что хотите удалить это поле?",
+      "types": {
+        "singleLineText": "Одна строка",
+        "multiLineText": "Многострочный текст",
+        "numeric": "Число",
+        "link": "Ссылка",
+        "boolean": "Да/Нет (Логическое)"
+      }
+    },
+    "customId": {
+      "preview": "Предпросмотр формата",
+      "parts": "Структура (Перетащите для сортировки)",
+      "addParts": "Доступные компоненты",
+      "confirmDelete": "Удалить компонент",
+      "confirmDeleteMessage": "Вы уверены, что хотите удалить этот компонент из формата ID?",
+      "hints": {
+        "FixedText": "Префикс/суффикс",
+        "Sequence": "Автоинкремент",
+        "Random6Digit": "Случайное 6-значное число",
+        "Random9Digit": "Случайное 9-значное число",
+        "Guid": "Уникальный ID (8 симв.)",
+        "DateTime": "Текущая дата (ггггММдд)"
+      }
+    },
+    "access": {
+      "title": "У кого есть доступ",
+      "searchUsers": "Поиск пользователей...",
+      "add": "Добавить",
+      "currentAccess": "Текущий доступ",
+      "noAccess": "Доступ пока никому не предоставлен",
+      "addedAt": "Добавлено: {{time}}",
+      "remove": "Удалить доступ",
+      "confirmRemoveTitle": "Удалить доступ",
+      "confirmRemoveMessage": "Вы уверены, что хотите закрыть доступ для {{name}}?"
+    },
+    "settings": {
+      "general": "Общие настройки",
+      "cover": "Обложка инвентаря",
+      "title": "Название",
+      "description": "Описание",
+      "category": "Категория",
+      "visibility": "Видимость",
+      "public": "Публичный инвентарь",
+      "private": "Приватный инвентарь",
+      "tags": "Ключевые слова и теги",
+      "tagsPlaceholder": "Начните вводить для поиска или создания...",
+      "saveChanges": "Сохранить изменения",
+      "dangerZone": "Опасная зона",
+      "deleteTitle": "Удалить этот инвентарь",
+      "deleteDesc": "После удаления инвентаря все предметы, поля и данные будут безвозвратно удалены. Это действие нельзя отменить.",
+      "deleteBtn": "Удалить навсегда",
+      "saveSuccess": "Изменения успешно сохранены!"
+    },
+    "statistics": {
+      "totalItems": "Всего предметов",
+      "totalLikes": "Всего лайков",
+      "addedOverTime": "Добавление предметов по времени"
+    }
+  },
+  "discussion": {
+    "title": "Обсуждение",
+    "connected": "В сети",
+    "reconnecting": "Переподключение...",
+    "disconnected": "Не в сети",
+    "connecting": "Подключение...",
+    "noPosts": "Сообщений пока нет. Начните обсуждение!",
+    "writeMessage": "Напишите сообщение...",
+    "send": "Отправить",
+    "markdownSupported": "Поддерживается Markdown. Ctrl+Enter для отправки.",
+    "loginRequired": "Пожалуйста, войдите, чтобы участвовать в обсуждении",
+    "deletePost": "Удалить сообщение"
+  },
+  "form": { "inventoryTitle": "Название", "description": "Описание", "category": "Категория", "isPublic": "Публичный инвентарь", "save": "Сохранить", "cancel": "Отмена", "create": "Создать", "titlePlaceholder": "Введите название инвентаря" },
+  "errors": { "general": "Произошла ошибка", "network": "Ошибка соединения. Попробуйте еще раз.", "unauthorized": "Пожалуйста, войдите в систему.", "forbidden": "У вас нет прав для этого действия.", "conflict": "Запись была изменена кем-то другим. Обновите страницу.", "notFound": "Не найдено.", "required": "Это поле обязательно для заполнения." },
+  "common": { "loading": "Загрузка...", "noData": "Нет данных", "actions": "Действия", "edit": "Изменить", "delete": "Удалить", "confirm": "Подтвердить", "close": "Закрыть", "back": "Назад", "refresh": "Обновить", "add": "Добавить", "save": "Сохранить", "select": "Выберите...", "page": "Страница", "next": "Вперед", "search": "Поиск..." },
+  "theme": { "light": "Светлая", "dark": "Темная" },
+  "items": {
+    "title": "Предметы",
+    "add": "Добавить предмет",
+    "empty": "В этом инвентаре пока нет предметов.",
+    "columns": { "customId": "Спец. ID", "tags": "Теги", "createdAt": "Создано", "updatedAt": "Изменено" },
+    "form": { "tags": "Теги", "tagsPlaceholder": "Введите теги через запятую", "customFields": "Доп. поля", "stringField": "Текстовое поле {{index}}", "textField": "Большое текстовое поле {{index}}", "numberField": "Числовое поле {{index}}", "linkField": "Поле ссылки {{index}}", "booleanField": "Логическое поле {{index}}" },
+    "tabs": { "details": "Детали", "edit": "Изменить" },
+    "pageTitle": "Предмет: {{customId}}",
+    "createTitle": "Создать новый предмет",
+    "customId": "Спец. ID",
+    "tags": "Теги",
+    "createdAt": "Создано",
+    "updatedAt": "Изменено",
+    "customFields": "Дополнительные поля",
+    "notFound": "Предмет не найден",
+    "confirmDeleteTitle": "Удалить предмет",
+    "confirmDeleteMessage": "Вы уверены, что хотите удалить этот предмет?",
+    "createNew": "Создать новый предмет",
+    "noItems": "Предметов не найдено."
+  }
+}

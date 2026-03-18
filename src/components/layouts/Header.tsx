@@ -150,7 +150,7 @@ const Header: React.FC = () => {
               ref={searchInputRef}
               type="text"
               className="search-input"
-              placeholder={t("common.search", "Search inventories...")}
+              placeholder={t("common.search", "Search...")}
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
               onFocus={() => setShowSearchDropdown(true)}
@@ -197,7 +197,7 @@ const Header: React.FC = () => {
                           borderBottom: "1px solid var(--border)",
                         }}
                       >
-                        {t("search.inventories", "Inventories")}
+                        {t("inventories.title", "Inventories")}
                       </div>
                       {searchResults.inventories
                         .slice(0, 3)
@@ -238,7 +238,7 @@ const Header: React.FC = () => {
                               >
                                 {inventory.ownerName} ·{" "}
                                 {inventory.itemCount || 0}{" "}
-                                {t("search.items", "items")}
+                                {t("items.title", "items")}
                               </div>
                             </div>
                           </div>
@@ -256,7 +256,7 @@ const Header: React.FC = () => {
                           borderBottom: "1px solid var(--border)",
                         }}
                       >
-                        {t("search.items", "Items")}
+                        {t("items.title", "Items")}
                       </div>
                       {searchResults.items.slice(0, 3).map((item) => (
                         <div
@@ -321,8 +321,9 @@ const Header: React.FC = () => {
                       }
                     >
                       🔍{" "}
-                      {t("search.seeAll", 'See all results for "{{query}}"', {
+                      {t("search.seeAll", {
                         query: searchQuery,
+                        defaultValue: `See all results for "${searchQuery}"`
                       })}
                     </div>
                   )}
@@ -347,6 +348,12 @@ const Header: React.FC = () => {
               onClick={() => changeLanguage("uz")}
             >
               UZ
+            </button>
+            <button
+              className={`lang-btn ${currentLang === "ru" ? "active" : ""}`}
+              onClick={() => changeLanguage("ru")}
+            >
+              RU
             </button>
           </div>
 
@@ -420,7 +427,7 @@ const Header: React.FC = () => {
                     className="dropdown-item"
                     onClick={() => setIsDropdownOpen(false)}
                   >
-                    My Page
+                    {t("nav.myPage", "My Page")}
                   </Link>
                   {isAdmin && (
                     <Link
@@ -428,7 +435,7 @@ const Header: React.FC = () => {
                       className="dropdown-item"
                       onClick={() => setIsDropdownOpen(false)}
                     >
-                      Admin Panel
+                      {t("nav.adminPanel", "Admin Panel")}
                     </Link>
                   )}
                   <Link
