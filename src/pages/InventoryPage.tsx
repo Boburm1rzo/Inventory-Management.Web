@@ -105,9 +105,9 @@ const InventoryPage: React.FC = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="p-5 text-center">{t("common.loading", "Loading...")}</div>;
   if (error) return <ErrorAlert message={error} />;
-  if (!inventory) return <div>Inventory not found</div>;
+  if (!inventory) return <div className="p-5 text-center">{t("inventory.notFound", "Inventory not found")}</div>;
 
   return (
     <div className="inventory-page">

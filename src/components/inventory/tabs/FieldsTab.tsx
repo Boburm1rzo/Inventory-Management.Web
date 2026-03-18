@@ -340,6 +340,7 @@ const FieldsTab: React.FC<FieldsTabProps> = ({ inventoryId, canEdit }) => {
           onCancel={() => setDeleteFieldId(null)}
         />
       )}
+
       <style
         dangerouslySetInnerHTML={{
           __html: `

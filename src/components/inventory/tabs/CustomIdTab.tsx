@@ -137,6 +137,8 @@ const PartCard: React.FC<PartCardProps> = ({
     if (e.key === "Escape") setIsEditing(false);
   };
 
+  const { t } = useTranslation();
+
   return (
     <div
       ref={setNodeRef}
@@ -148,7 +150,7 @@ const PartCard: React.FC<PartCardProps> = ({
         ⠿
       </div>
       <div className="part-type" style={{ backgroundColor: config.color }}>
-        [{config.label}]
+        [{t(`inventory.customId.types.${typeKey}`, config.label)}]
       </div>
       <div className="part-content">
         {isEditing ? (
@@ -157,18 +159,19 @@ const PartCard: React.FC<PartCardProps> = ({
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleSave}
             onKeyDown={handleKeyDown}
-            placeholder="Enter text..."
+            placeholder={t("common.enterText", "Enter text...")}
             autoFocus
           />
         ) : (
-          <span>{part.config || config.description}</span>
+          <span>{part.config || t(`inventory.customId.hints.${typeKey}`, config.description)}</span>
         )}
       </div>
       {canEdit && (
-        <button onClick={() => onDelete(part.id)} className="delete-btn">
+        <button onClick={() => onDelete(part.id)} className="delete-btn" title={t("common.delete", "Delete")}>
           ×
         </button>
       )}
+
       <style
         dangerouslySetInnerHTML={{
           __html: `

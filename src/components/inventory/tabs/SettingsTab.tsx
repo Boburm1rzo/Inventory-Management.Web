@@ -374,14 +374,14 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         <form onSubmit={handleSave} className="settings-section">
           <div className="section-header">
             <Layers size={20} className="text-accent" />
-            <h3>General Configuration</h3>
+            <h3>{t("inventory.settings.general", "General Configuration")}</h3>
           </div>
           
           <div className="section-body">
             <div className="row g-4">
               <div className="col-lg-4">
                 <label className="form-label-custom">
-                  <ImageIcon size={16} /> Inventory Cover
+                  <ImageIcon size={16} /> {t("inventory.settings.cover", "Inventory Cover")}
                 </label>
                 <div className="p-0">
                   <ImageUpload
@@ -395,7 +395,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
               <div className="col-lg-8">
                 <div className="mb-4">
                   <label className="form-label-custom">
-                    <Type size={16} /> Title
+                    <Type size={16} /> {t("inventory.settings.title", "Title")}
                   </label>
                   <input
                     type="text"
@@ -405,14 +405,14 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                       setFormData({ ...formData, title: e.target.value })
                     }
                     disabled={!canEdit || loading}
-                    placeholder="E.g. My Workspace Tools"
+                    placeholder={t("form.titlePlaceholder", "Enter title...")}
                     required
                   />
                 </div>
                 
                 <div className="mb-0">
                   <label className="form-label-custom">
-                    <FileText size={16} /> Description
+                    <FileText size={16} /> {t("inventory.settings.description", "Description")}
                   </label>
                   <textarea
                     className="form-control-custom"
@@ -422,14 +422,14 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                       setFormData({ ...formData, description: e.target.value })
                     }
                     disabled={!canEdit || loading}
-                    placeholder="Briefly describe what's inside this inventory..."
+                    placeholder={t("form.descriptionPlaceholder", "Briefly describe...")}
                   />
                 </div>
               </div>
               
               <div className="col-md-6">
                 <label className="form-label-custom">
-                  <Globe size={16} /> Category
+                  <Globe size={16} /> {t("inventory.settings.category", "Category")}
                 </label>
                 <select
                   className="form-select-custom"
@@ -453,11 +453,11 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
               
               <div className="col-md-6">
                 <label className="form-label-custom">
-                  <Globe size={16} /> Visibility
+                  <Globe size={16} /> {t("inventory.settings.visibility", "Visibility")}
                 </label>
                 <div className="visibility-toggle">
                   <span className="fs-14 fw-500 text-primary">
-                    {formData.isPublic ? 'Public Inventory' : 'Private Inventory'}
+                    {formData.isPublic ? t("inventory.settings.public", "Public Inventory") : t("inventory.settings.private", "Private Inventory")}
                   </span>
                   <div className="form-check form-switch p-0 m-0">
                     <input
@@ -476,7 +476,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
 
               <div className="col-12">
                 <label className="form-label-custom">
-                  <Tag size={16} /> Keywords & Tags
+                  <Tag size={16} /> {t("inventory.settings.tags", "Keywords & Tags")}
                 </label>
                 <CreatableSelect
                   isMulti
@@ -492,7 +492,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     });
                   }}
                   isDisabled={!canEdit || loading}
-                  placeholder="Type to search or create new tags..."
+                  placeholder={t("inventory.settings.tagsPlaceholder", "Type to search...")}
                 />
               </div>
 
@@ -508,7 +508,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     ) : (
                       <Save size={18} />
                     )}
-                    Save Changes
+                    {t("inventory.settings.saveChanges", "Save Changes")}
                   </button>
                 </div>
               )}
@@ -520,15 +520,14 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           <div className="settings-section danger-section">
             <div className="section-header danger-header">
               <ShieldAlert size={20} />
-              <h3>Danger Zone</h3>
+              <h3>{t("inventory.settings.dangerZone", "Danger Zone")}</h3>
             </div>
             <div className="section-body">
               <div className="danger-content">
                 <div className="danger-text">
-                  <h4>Delete this inventory</h4>
+                  <h4>{t("inventory.settings.deleteTitle", "Delete this inventory")}</h4>
                   <p>
-                    Once you delete an inventory, all its items, custom fields, and data will be permanently removed. 
-                    This action cannot be undone.
+                    {t("inventory.settings.deleteDesc", "Once you delete an inventory, all data will be permanently removed.")}
                   </p>
                 </div>
                 <button
@@ -537,7 +536,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                   onClick={() => setShowDeleteConfirm(true)}
                   disabled={loading}
                 >
-                  <Trash2 size={18} /> Delete Permanently
+                  <Trash2 size={18} /> {t("inventory.settings.deleteBtn", "Delete Permanently")}
                 </button>
               </div>
             </div>
@@ -547,8 +546,8 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
 
       <ConfirmModal
         isOpen={showDeleteConfirm}
-        title="Delete Inventory"
-        message="Are you sure you want to delete this inventory? All items and fields within it will be permanently removed."
+        title={t("inventories.deleteConfirm", "Delete Inventory")}
+        message={t("inventory.settings.deleteDesc", "Are you sure? All items will be removed.")}
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteConfirm(false)}
       />

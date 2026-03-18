@@ -105,7 +105,7 @@ const InventoriesPage: React.FC = () => {
               setIsFormOpen(true);
             }}
           >
-            + {t("inventories.createBtn", "Yangi yaratish")}
+            + {t("inventories.createBtn", "New Inventory")}
           </button>
         )}
       </div>
@@ -150,8 +150,8 @@ const InventoriesPage: React.FC = () => {
       {/* DELETE uchun Confirm Modal */}
       <ConfirmModal
         isOpen={isConfirmOpen}
-        title="Tasdiqlash"
-        message="Haqiqatan ham bu inventarni o'chirmoqchimisiz?"
+        title={t("common.confirm", "Confirm")}
+        message={t("inventories.deleteConfirm", "Are you sure you want to delete this inventory?")}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setIsConfirmOpen(false)}
         isProcessing={actionLoading}

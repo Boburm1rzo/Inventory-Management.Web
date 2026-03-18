@@ -247,12 +247,12 @@ const ItemsTab: React.FC<ItemsTabProps> = ({
             <table className="items-table">
               <thead>
                 <tr>
-                  <th>Custom ID</th>
+                  <th>{t("items.columns.customId", "Custom ID")}</th>
                   {tableFields.map((f) => (
                     <th key={f.id}>{f.title}</th>
                   ))}
-                  <th>Created</th>
-                  <th style={{ width: "120px" }}>Actions</th>
+                  <th>{t("items.columns.createdAt", "Created")}</th>
+                  <th style={{ width: "120px" }}>{t("common.actions", "Actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -274,12 +274,14 @@ const ItemsTab: React.FC<ItemsTabProps> = ({
                             <button
                               className="action-btn"
                               onClick={() => openEditModal(item.id)}
+                              title={t("common.edit", "Edit")}
                             >
                               <Edit2 size={14} />
                             </button>
                             <button
                               className="action-btn delete"
                               onClick={() => setItemToDelete(item.id)}
+                              title={t("common.delete", "Delete")}
                             >
                               <Trash2 size={14} />
                             </button>
@@ -299,17 +301,17 @@ const ItemsTab: React.FC<ItemsTabProps> = ({
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
             >
-              <ChevronLeft size={16} /> Previous
+              <ChevronLeft size={16} /> {t("common.back", "Previous")}
             </button>
             <span>
-              Page {data?.page} of {data?.totalPages}
+              {t("common.page", "Page")} {data?.page} of {data?.totalPages}
             </span>
             <button
               className="page-btn"
               disabled={!data?.hasNextPage}
               onClick={() => setPage((p) => p + 1)}
             >
-              Next <ChevronRight size={16} />
+              {t("common.next", "Next")} <ChevronRight size={16} />
             </button>
           </div>
         </>
@@ -334,8 +336,8 @@ const ItemsTab: React.FC<ItemsTabProps> = ({
 
       <ConfirmModal
         isOpen={itemToDelete !== null}
-        title="Delete Item"
-        message="Are you sure you want to delete this item? This action cannot be undone."
+        title={t("items.confirmDeleteTitle", "Delete Item")}
+        message={t("items.confirmDeleteMessage", "Are you sure you want to delete this item?")}
         onConfirm={handleDelete}
         onCancel={() => setItemToDelete(null)}
       />

@@ -163,7 +163,7 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
       connecting: "gray"
     };
     const color = statusColors[connectionStatus] || "gray";
-    const label = connectionStatus === "connected" ? "Live" : connectionStatus;
+    const label = t(`discussion.${connectionStatus}`, connectionStatus);
     
     return (
       <span style={{ color, fontSize: "0.75rem", fontWeight: "600" }}>
@@ -252,6 +252,7 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
           </div>
         )}
       </div>
+
 
       {error && <ErrorAlert message={error} onDismiss={() => setError(null)} />}
 
