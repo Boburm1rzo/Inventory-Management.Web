@@ -132,41 +132,66 @@ const ItemsTab: React.FC<ItemsTabProps> = ({
           font-size: 14px;
         }
         .items-table th, .items-table td {
-          padding: 12px 16px;
+          padding: 14px 16px;
           text-align: left;
           border-bottom: 1px solid var(--border);
         }
         .items-table th {
           background: var(--bg-secondary);
           color: var(--text-secondary);
-          font-weight: 600;
+          font-weight: 700;
           text-transform: uppercase;
           font-size: 11px;
           letter-spacing: 0.05em;
         }
+        .items-table tr {
+          transition: background 0.2s;
+        }
         .items-table tr:last-child td { border-bottom: none; }
         .items-table tr:hover { background: var(--bg-secondary); }
+        
+        .fw-medium { font-weight: 600; color: var(--text-primary); }
+        .text-muted { color: var(--text-muted); font-size: 0.85rem; }
+
         .actions-cell {
           display: flex;
           align-items: center;
           gap: 8px;
-          opacity: 0;
+          opacity: 0.8;
           transition: opacity 0.2s;
         }
         .items-table tr:hover .actions-cell { opacity: 1; }
+        
         .action-btn {
           background: none;
           border: none;
-          padding: 4px;
+          padding: 6px;
           cursor: pointer;
-          color: var(--text-muted);
-          border-radius: 4px;
+          color: var(--text-secondary);
+          border-radius: 6px;
           display: flex;
           align-items: center;
           justify-content: center;
+          transition: all 0.2s;
         }
-        .action-btn:hover { background: var(--bg-primary); color: var(--text-primary); }
-        .action-btn.delete:hover { color: var(--danger); background: #fee2e2; }
+        .action-btn:hover { 
+          background: var(--bg-primary); 
+          color: var(--accent);
+          transform: translateY(-1px);
+        }
+        .action-btn.delete:hover { 
+          color: var(--danger); 
+          background: rgba(239, 68, 68, 0.1); 
+        }
+        
+        /* Ensure LikeButton also follows the muted-to-visible pattern if it has a class */
+        .actions-cell .like-btn {
+          opacity: 0.6;
+          transition: opacity 0.2s;
+        }
+        .actions-cell .like-btn:hover {
+          opacity: 1;
+        }
         
         .pagination {
           display: flex;

@@ -8,13 +8,15 @@ import Pagination from "../components/common/Pagination";
 import ErrorAlert from "../components/common/ErrorAlert";
 import ConfirmModal from "../components/common/ConfirmModal";
 import InventoryFormModal from "../components/inventory/InventoryForModal";
-import "../styles/InventoriesPage.css";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const PAGE_SIZE = 10;
 
 const InventoriesPage: React.FC = () => {
   const { t } = useTranslation();
   const { isAuthenticated, user, isAdmin } = useAuth();
+  const { search } = useLocation();
+  const navigate = useNavigate();
 
   const [data, setData] = useState<PagedResult<InventoryListItemDto> | null>(
     null,
@@ -48,6 +50,17 @@ const InventoriesPage: React.FC = () => {
   useEffect(() => {
     fetchInventories(currentPage);
   }, [currentPage]);
+
+  // URL query orqali avtomatik modal ochish (masalan, ?create=true)
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    if (params.get("create") === "true" && isAuthenticated) {
+      setSelectedInventory(null);
+      setIsFormOpen(true);
+      // Query parlametrlarni tozalash (URL'ni chiroyli saqlash uchun)
+      navigate("/inventories", { replace: true });
+    }
+  }, [search, isAuthenticated, navigate]);
 
   // UPDATE action: Tahrirlash tugmasi bosilganda
   const handleEditClick = async (id: number) => {

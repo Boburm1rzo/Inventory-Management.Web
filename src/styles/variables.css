@@ -29,15 +29,15 @@
     --bg-card: #1e2235;
     --bg-header: rgba(15, 17, 23, 0.88);
     --text-primary: #e8eaf6;
-    --text-secondary: #8892a4;
-    --text-muted: #4a5568;
+    --text-secondary: #a0aec0;
+    --text-muted: #718096;
     --accent: #4cc9f0;
     --accent-hover: #38b6dd;
     --accent-subtle: #0d2233;
     --success: #34d399;
     --danger: #f87171;
     --warning: #fbbf24;
-    --border: #2a3044;
+    --border: #2d3748;
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);

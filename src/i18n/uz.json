@@ -1,7 +1,13 @@
 {
   "nav": { "home": "Bosh sahifa", "inventories": "Inventarlar", "login": "Kirish", "register": "Ro'yxatdan o'tish", "logout": "Chiqish", "profile": "Profil" },
   "auth": { "loginTitle": "Xush kelibsiz", "registerTitle": "Hisob yaratish", "email": "Email", "password": "Parol", "displayName": "Ism", "loginBtn": "Kirish", "registerBtn": "Hisob yaratish", "noAccount": "Hisobingiz yo'qmi?", "hasAccount": "Hisobingiz bormi?", "googleBtn": "Google bilan davom etish", "facebookBtn": "Facebook bilan davom etish", "orDivider": "yoki quyidagilar orqali" },
-  "home": { "latestTitle": "So'nggi inventarlar", "topTitle": "Eng mashhurlar", "columns": { "title": "Nomi", "category": "Kategoriya", "owner": "Egasi", "createdAt": "Yaratilgan", "itemCount": "Narsalar" } },
+  "home": { 
+    "hero": {
+      "title": "Hammasini oson boshqaring.",
+      "subtitle": "Aktivlaringizni kuzatish, jamoangiz bilan hamkorlik qilish va tartibli bo'lish uchun zamonaviy, tezkor platforma.",
+      "browseBtn": "Inventarlarni ko'rish"
+    },
+    "latestTitle": "So'nggi inventarlar", "topTitle": "Eng mashhurlar", "columns": { "title": "Nomi", "category": "Kategoriya", "owner": "Egasi", "createdAt": "Yaratilgan", "itemCount": "Narsalar" } },
   "inventories": { "title": "Inventarlar", "createBtn": "Yangi inventar", "columns": { "title": "Nomi", "category": "Kategoriya", "owner": "Egasi", "createdAt": "Yaratilgan" }, "empty": "Hozircha inventarlar yo'q", "deleteConfirm": "Bu inventarni o'chirishni xohlaysizmi?" },
   "form": { "inventoryTitle": "Nomi", "description": "Tavsif", "category": "Kategoriya", "isPublic": "Ochiq inventar", "save": "Saqlash", "cancel": "Bekor qilish", "create": "Yaratish", "titlePlaceholder": "Inventar nomini kiriting" },
   "errors": { "general": "Xatolik yuz berdi", "network": "Ulanishda xatolik. Qaytadan urinib ko'ring.", "unauthorized": "Davom etish uchun tizimga kiring.", "forbidden": "Sizda ruxsat yo'q.", "conflict": "Boshqa kimdir bu yozuvni o'zgartirdi. Sahifani yangilang.", "notFound": "Topilmadi." },

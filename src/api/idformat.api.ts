@@ -18,6 +18,8 @@ export const addIdFormatPart = async (
   inventoryId: number,
   dto: CreateIdFormatPartDto,
 ): Promise<InventoryIdFormatPartDto> => {
+  console.log("Adding ID format part with payload:", dto);
+
   const response = await axiosInstance.post(
     `/inventories/${inventoryId}/id-format`,
     dto,

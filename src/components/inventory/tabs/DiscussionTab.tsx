@@ -26,13 +26,13 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const connectionRef = useRef<signalR.HubConnection | null>(null);
-  const postsEndRef = useRef<HTMLDivElement>(null);
 
   const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
       const data = await postsApi.getPosts(inventoryId);
-      setPosts(data);
+      // Sort newest first
+      setPosts(data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -40,18 +40,14 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
     }
   }, [inventoryId]);
 
-  const setupSignalR = useCallback(async () => {
-    // ← qo'shildi: allaqachon connection bor bo'lsa qaytish
+  const setupSignalR = useCallback(async (isMounted: () => boolean) => {
     if (connectionRef.current) return;
 
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const baseUrl = (import.meta.env.VITE_API_BASE_URL as string).replace(
-        "/api",
-        "",
-      );
+      const baseUrl = (import.meta.env.VITE_API_BASE_URL as string).replace("/api", "");
 
       const connection = new signalR.HubConnectionBuilder()
         .withUrl(`${baseUrl}/hubs/discussion`, {
@@ -60,50 +56,69 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
         .withAutomaticReconnect()
         .build();
 
-      // ← ref ga OLDIN yozish — race condition oldini olish
       connectionRef.current = connection;
 
-      connection.onclose(() => setConnectionStatus("disconnected"));
-      connection.onreconnecting(() => setConnectionStatus("reconnecting"));
-      connection.onreconnected(() => setConnectionStatus("connected"));
+      connection.onclose(() => {
+        if (isMounted()) setConnectionStatus("disconnected");
+      });
+      connection.onreconnecting(() => {
+        if (isMounted()) setConnectionStatus("reconnecting");
+      });
+      connection.onreconnected(() => {
+        if (isMounted()) setConnectionStatus("connected");
+      });
 
       connection.on("NewPost", (post: PostDto) => {
         setPosts((prev) => {
-          // ← duplicate oldini olish
           if (prev.some((p) => p.id === post.id)) return prev;
-          return [...prev, post];
+          return [post, ...prev]; // New posts at the top
         });
       });
 
       await connection.start();
+      
+      if (!isMounted()) {
+        await connection.stop();
+        return;
+      }
+
       setConnectionStatus("connected");
       await connection.invoke("JoinInventory", inventoryId.toString());
-    } catch (err: unknown) {
+    } catch (err: any) {
       connectionRef.current = null;
+      // Suppress "stopped during negotiation" or abort errors as they are expected during navigation
+      if (err.name === "AbortError" || err.message?.includes("stopped during negotiation")) {
+        return;
+      }
       console.error("SignalR connection error:", err);
-      setConnectionStatus("disconnected");
+      if (isMounted()) setConnectionStatus("disconnected");
     }
   }, [inventoryId]);
 
   const cleanupSignalR = useCallback(async () => {
-    if (connectionRef.current) {
+    const connection = connectionRef.current;
+    connectionRef.current = null; // Clear ref immediately
+    if (connection) {
       try {
-        await connectionRef.current.invoke(
-          "LeaveInventory",
-          inventoryId.toString(),
-        );
-        await connectionRef.current.stop();
+        if (connection.state === signalR.HubConnectionState.Connected) {
+          await connection.invoke("LeaveInventory", inventoryId.toString());
+        }
+        await connection.stop();
       } catch (err) {
-        console.error("SignalR cleanup error:", err);
+        // Ignore errors during cleanup
       }
-      connectionRef.current = null;
     }
   }, [inventoryId]);
 
   useEffect(() => {
+    let mounted = true;
+    const isMounted = () => mounted;
+
     fetchPosts();
-    setupSignalR();
+    setupSignalR(isMounted);
+    
     return () => {
+      mounted = false;
       cleanupSignalR();
     };
   }, [fetchPosts, setupSignalR, cleanupSignalR]);
@@ -115,7 +130,8 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
     try {
       setIsSubmitting(true);
       const dto: CreatePostDto = { content: newPostContent.trim() };
-      await postsApi.createPost(inventoryId, dto);
+      const newPost = await postsApi.createPost(inventoryId, dto);
+      setPosts(prev => prev.some(p => p.id === newPost.id) ? prev : [newPost, ...prev]);
       setNewPostContent("");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -140,144 +156,91 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
   };
 
   const getStatusIndicator = () => {
-    switch (connectionStatus) {
-      case "connected":
-        return (
-          <span style={{ color: "green" }}>
-            🟢 {t("discussion.connected", "Connected")}
-          </span>
-        );
-      case "reconnecting":
-        return (
-          <span style={{ color: "orange" }}>
-            🟡 {t("discussion.reconnecting", "Reconnecting...")}
-          </span>
-        );
-      case "disconnected":
-        return (
-          <span style={{ color: "red" }}>
-            🔴 {t("discussion.disconnected", "Disconnected")}
-          </span>
-        );
-      default:
-        return (
-          <span style={{ color: "gray" }}>
-            ⏳ {t("discussion.connecting", "Connecting...")}
-          </span>
-        );
-    }
+    const statusColors = {
+      connected: "green",
+      reconnecting: "orange",
+      disconnected: "red",
+      connecting: "gray"
+    };
+    const color = statusColors[connectionStatus] || "gray";
+    const label = connectionStatus === "connected" ? "Live" : connectionStatus;
+    
+    return (
+      <span style={{ color, fontSize: "0.75rem", fontWeight: "600" }}>
+        ● {label.charAt(0).toUpperCase() + label.slice(1)}
+      </span>
+    );
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+  if (loading) return <LoadingSpinner />;
 
   return (
-    <div
-      style={{
-        padding: "1rem",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "1rem",
-        }}
-      >
-        <h3>{t("discussion.title", "Discussion")}</h3>
-        {getStatusIndicator()}
+    <div className="discussion-container">
+      <div className="discussion-header">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h3 className="m-0">{t("discussion.title", "Discussion")}</h3>
+          {getStatusIndicator()}
+        </div>
+
+        {isAuthenticated ? (
+          <form onSubmit={handleSubmitPost} className="post-form">
+            <div className="input-wrapper">
+              <textarea
+                value={newPostContent}
+                onChange={(e) => setNewPostContent(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={t("discussion.writeMessage", "Write a message...")}
+                maxLength={4000}
+              />
+              <button
+                type="submit"
+                disabled={!newPostContent.trim() || isSubmitting}
+                className="send-btn"
+              >
+                {isSubmitting ? "..." : t("discussion.send", "Post")}
+              </button>
+            </div>
+            <div className="form-hint">
+              {t("discussion.markdownSupported", "Markdown supported. Ctrl+Enter to post.")}
+            </div>
+          </form>
+        ) : (
+          <div className="login-hint">
+            {t("discussion.loginRequired", "Please login to join the discussion")}
+          </div>
+        )}
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", marginBottom: "1rem" }}>
+      <div className="posts-list">
         {posts.length === 0 ? (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "2rem",
-              color: "var(--text-muted)",
-            }}
-          >
+          <div className="no-posts">
             {t("discussion.noPosts", "No posts yet. Start the conversation!")}
           </div>
         ) : (
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
-          >
+          <div className="posts-stack">
             {posts.map((post) => (
               <div key={post.id} className="post-card">
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: "0.75rem",
-                  }}
-                >
+                <div className="post-layout">
                   {post.avatarUrl ? (
-                    <img
-                      src={post.avatarUrl}
-                      alt={post.authorName}
-                      className="avatar"
-                    />
+                    <img src={post.avatarUrl} alt={post.authorName} className="avatar" />
                   ) : (
                     <div className="avatar-initials">
-                      {(post.authorName || "?")
-                        .split(" ")
-                        .map((n) => n?.[0] || "")
-                        .join("")
-                        .toUpperCase()
-                        .slice(0, 2)}
+                      {(post.authorName || "?").split(" ").map(n => n?.[0]).join("").toUpperCase().slice(0, 2)}
                     </div>
                   )}
-                  <div style={{ flex: 1 }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                        marginBottom: "0.25rem",
-                      }}
-                    >
-                      <span style={{ fontWeight: "500" }}>
-                        {post.authorName}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.875rem",
-                          color: "var(--text-muted)",
-                        }}
-                      >
-                        {timeAgo(post.createdAt)}
-                      </span>
+                  <div className="post-content-area">
+                    <div className="post-meta">
+                      <span className="author-name">{post.authorName}</span>
+                      <span className="post-time">{timeAgo(post.createdAt)}</span>
                     </div>
-                    <div style={{ marginBottom: "0.5rem" }}>
+                    <div className="post-text">
                       <ReactMarkdown>{post.content}</ReactMarkdown>
                     </div>
                   </div>
-                  {(user?.displayName === post.authorName ||
-                    user?.roles?.includes("Admin")) && (
+                  {(user?.displayName === post.authorName || user?.roles?.includes("Admin")) && (
                     <button
                       onClick={() => handleDeletePost(post.id)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "var(--danger)",
-                        cursor: "pointer",
-                        padding: "0.25rem",
-                        borderRadius: "var(--radius-sm)",
-                        opacity: 0,
-                        transition: "opacity 0.2s",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.opacity = "1")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.opacity = "0")
-                      }
+                      className="delete-post-btn"
                       title={t("discussion.deletePost", "Delete post")}
                     >
                       🗑️
@@ -286,96 +249,135 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
                 </div>
               </div>
             ))}
-            <div ref={postsEndRef} />
           </div>
         )}
       </div>
 
-      {isAuthenticated ? (
-        <form onSubmit={handleSubmitPost} style={{ marginTop: "auto" }}>
-          <div
-            style={{ display: "flex", gap: "0.5rem", alignItems: "flex-end" }}
-          >
-            <textarea
-              value={newPostContent}
-              onChange={(e) => setNewPostContent(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={t("discussion.writeMessage", "Write a message...")}
-              style={{
-                flex: 1,
-                minHeight: "80px",
-                padding: "0.75rem",
-                border: "1px solid var(--border)",
-                borderRadius: "var(--radius-md)",
-                background: "var(--bg-primary)",
-                color: "var(--text-primary)",
-                resize: "vertical",
-              }}
-              maxLength={4000}
-            />
-            <button
-              type="submit"
-              disabled={!newPostContent.trim() || isSubmitting}
-              style={{
-                padding: "0.75rem 1.5rem",
-                background: "var(--accent)",
-                color: "white",
-                border: "none",
-                borderRadius: "var(--radius-md)",
-                cursor:
-                  newPostContent.trim() && !isSubmitting
-                    ? "pointer"
-                    : "not-allowed",
-                opacity: newPostContent.trim() && !isSubmitting ? 1 : 0.5,
-              }}
-            >
-              {isSubmitting ? <LoadingSpinner /> : t("discussion.send", "Send")}
-            </button>
-          </div>
-          <div
-            style={{
-              fontSize: "0.875rem",
-              color: "var(--text-muted)",
-              marginTop: "0.25rem",
-            }}
-          >
-            {t(
-              "discussion.markdownSupported",
-              "Markdown supported. Ctrl+Enter to send.",
-            )}
-          </div>
-        </form>
-      ) : (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "1rem",
-            color: "var(--text-muted)",
-          }}
-        >
-          {t("discussion.loginRequired", "Please login to join the discussion")}
-        </div>
-      )}
-
       {error && <ErrorAlert message={error} onDismiss={() => setError(null)} />}
 
       <style>{`
+        .discussion-container {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          padding: 1rem;
+        }
+        
+        .discussion-header {
+          flex-shrink: 0;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid var(--border);
+          margin-bottom: 1rem;
+        }
+
+        .post-form {
+          background: var(--bg-secondary);
+          padding: 1rem;
+          border-radius: var(--radius-md);
+          border: 1px solid var(--border);
+        }
+
+        .input-wrapper {
+          display: flex;
+          gap: 0.75rem;
+          align-items: flex-start;
+        }
+
+        .input-wrapper textarea {
+          flex: 1;
+          min-height: 60px;
+          max-height: 150px;
+          padding: 0.75rem;
+          border: 1px solid var(--border);
+          border-radius: var(--radius-md);
+          background: var(--bg-primary);
+          color: var(--text-primary);
+          resize: none;
+          font-size: 0.95rem;
+        }
+
+        .send-btn {
+          padding: 0.75rem 1.5rem;
+          background: var(--accent);
+          color: white;
+          border: none;
+          border-radius: var(--radius-md);
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        .posts-list {
+          flex: 1;
+          overflow-y: auto;
+          padding-right: 0.5rem;
+        }
+
+        .posts-stack {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+
         .post-card {
           background: var(--bg-card);
           border: 1px solid var(--border);
           border-radius: var(--radius-md);
           padding: 1rem;
-          transition: var(--transition);
         }
-        .post-card:hover {
-          border-color: var(--accent-subtle);
+
+        .post-layout {
+          display: flex;
+          gap: 0.75rem;
+          position: relative;
         }
+
+        .post-content-area {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .post-meta {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin-bottom: 0.25rem;
+        }
+
+        .author-name {
+          font-weight: 700;
+          font-size: 0.9rem;
+        }
+
+        .post-time {
+          font-size: 0.8rem;
+          color: var(--text-muted);
+        }
+
+        .post-text {
+          font-size: 0.95rem;
+          word-break: break-word;
+        }
+
+        .delete-post-btn {
+          background: none;
+          border: none;
+          color: var(--danger);
+          cursor: pointer;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+
+        .post-card:hover .delete-post-btn {
+          opacity: 1;
+        }
+
         .avatar {
           width: 36px;
           height: 36px;
           border-radius: 50%;
           object-fit: cover;
         }
+
         .avatar-initials {
           width: 36px;
           height: 36px;
@@ -385,8 +387,8 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 0.75rem;
           font-weight: 700;
+          font-size: 0.8rem;
         }
       `}</style>
     </div>

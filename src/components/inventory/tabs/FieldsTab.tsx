@@ -33,6 +33,13 @@ import {
 import ConfirmModal from "../../common/ConfirmModal";
 import ErrorAlert from "../../common/ErrorAlert";
 
+import {
+  Edit2,
+  Trash2,
+  Plus,
+  GripVertical,
+} from "lucide-react";
+
 interface FieldsTabProps {
   inventoryId: number;
   canEdit: boolean;
@@ -79,7 +86,7 @@ const FieldCard: React.FC<FieldCardProps> = ({
   return (
     <div ref={setNodeRef} style={style} className="field-card">
       <div className="drag-handle" {...attributes} {...listeners}>
-        ⠿
+        <GripVertical size={18} />
       </div>
       <div className="field-type" style={{ backgroundColor: config.color }}>
         {config.icon}
@@ -95,11 +102,11 @@ const FieldCard: React.FC<FieldCardProps> = ({
       </div>
       {canEdit && (
         <div className="field-actions">
-          <button onClick={() => onEdit(field)} className="edit-btn">
-            ✏️
+          <button onClick={() => onEdit(field)} className="action-icon-btn edit" title="Edit">
+            <Edit2 size={16} />
           </button>
-          <button onClick={() => onDelete(field.id)} className="delete-btn">
-            🗑️
+          <button onClick={() => onDelete(field.id)} className="action-icon-btn delete" title="Delete">
+            <Trash2 size={16} />
           </button>
         </div>
       )}
@@ -109,75 +116,73 @@ const FieldCard: React.FC<FieldCardProps> = ({
         .field-card {
           display: flex;
           align-items: center;
-          padding: 12px;
+          padding: 12px 16px;
           border: 1px solid var(--border);
-          border-radius: var(--radius-sm);
+          border-radius: var(--radius-md);
           background: var(--bg-card);
           margin-bottom: 8px;
           gap: 12px;
+          transition: all 0.2s;
+        }
+        .field-card:hover {
+          border-color: var(--accent-subtle);
+          box-shadow: var(--shadow-sm);
         }
         .drag-handle {
           cursor: grab;
           color: var(--text-muted);
           padding: 4px;
-          border-radius: 4px;
+          display: flex;
+          align-items: center;
         }
-        .drag-handle:hover {
-          color: var(--text-secondary);
-          background: var(--bg-secondary);
-        }
-        .drag-handle:active {
-          cursor: grabbing;
-        }
+        .drag-handle:active { cursor: grabbing; }
+        
         .field-type {
           width: 32px;
           height: 32px;
-          border-radius: 50%;
+          border-radius: 8px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
-          font-weight: bold;
+          font-weight: 700;
+          font-size: 0.9rem;
         }
-        .field-content {
-          flex: 1;
-        }
-        .field-title {
-          font-weight: 600;
-          color: var(--text-primary);
-        }
-        .field-description {
-          font-size: 0.8rem;
-          color: var(--text-muted);
-        }
-        .field-display {
-          font-size: 0.75rem;
-          color: var(--text-secondary);
-        }
+        .field-content { flex: 1; min-width: 0; }
+        .field-title { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; }
+        .field-description { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .field-display { font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; }
+        
         .field-actions {
           display: flex;
-          gap: 8px;
+          gap: 4px;
+          opacity: 0.6;
+          transition: opacity 0.2s;
         }
-        .edit-btn,
-        .delete-btn {
-          background: none;
+        .field-card:hover .field-actions { opacity: 1; }
+        
+        .action-icon-btn {
+          width: 32px;
+          height: 32px;
+          border-radius: 6px;
           border: none;
+          background: transparent;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           cursor: pointer;
-          padding: 4px;
-          border-radius: 4px;
+          color: var(--text-muted);
+          transition: all 0.2s;
         }
-        .edit-btn:hover {
-          background: var(--accent-subtle);
-        }
-        .delete-btn:hover {
-          background: var(--danger);
-        }
+        .action-icon-btn.edit:hover { background: var(--bg-secondary); color: var(--accent); }
+        .action-icon-btn.delete:hover { background: #fee2e2; color: var(--danger); }
       `,
         }}
       />
     </div>
   );
 };
+
 
 const FieldsTab: React.FC<FieldsTabProps> = ({ inventoryId, canEdit }) => {
   const { t } = useTranslation();
@@ -397,86 +402,107 @@ const AddFieldModal: React.FC<{
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h3>{t("inventory.fields.addField", "Add Field")}</h3>
-        <div className="form-group">
-          <label>{t("inventory.fields.title", "Title")} *</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder={t(
-              "inventory.fields.titlePlaceholder",
-              "Enter field title",
-            )}
-          />
+      <div className="modal-content field-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>{t("inventory.fields.addField", "Add Field")}</h3>
+          <button className="close-x" onClick={onClose}>&times;</button>
         </div>
-        <div className="form-group">
-          <label>{t("inventory.fields.description", "Description")}</label>
-          <input
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder={t(
-              "inventory.fields.descriptionPlaceholder",
-              "Optional description",
-            )}
-          />
-        </div>
-        <div className="form-group">
-          <label>{t("inventory.fields.type", "Type")}</label>
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as FieldType)}
-          >
-            <option value="SingleLineText">
-              {t("inventory.fields.types.singleLineText", "Single Line Text")}
-            </option>
-            <option value="MultiLineText">
-              {t("inventory.fields.types.multiLineText", "Multi Line Text")}
-            </option>
-            <option value="Numeric">
-              {t("inventory.fields.types.numeric", "Numeric")}
-            </option>
-            <option value="Link">
-              {t("inventory.fields.types.link", "Link")}
-            </option>
-            <option value="Boolean">
-              {t("inventory.fields.types.boolean", "Yes/No (Boolean)")}
-            </option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label className="checkbox-label">
+        
+        <div className="modal-body">
+          <div className="form-group">
+            <label>{t("inventory.fields.title", "Title")} *</label>
             <input
-              type="checkbox"
-              checked={displayInTable}
-              onChange={(e) => setDisplayInTable(e.target.checked)}
+              type="text"
+              className="form-input"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={t(
+                "inventory.fields.titlePlaceholder",
+                "Enter field title",
+              )}
+              autoFocus
             />
-            {t("inventory.fields.displayInTable", "Display in table")}
-          </label>
-        </div>
-        {(type === "SingleLineText" || type === "MultiLineText") && (
-          <div className="limit-info">
-            {t(
-              "inventory.fields.textFieldsUsed",
-              "Text fields: {{count}}/{{max}} used",
-              { count: textFieldCount, max: maxTextFields },
-            )}
           </div>
-        )}
-        <div className="modal-actions">
-          <button onClick={onClose} className="cancel-btn">
+          
+          <div className="form-group">
+            <label>{t("inventory.fields.description", "Description")}</label>
+            <textarea
+              className="form-input"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder={t(
+                "inventory.fields.descriptionPlaceholder",
+                "Optional description",
+              )}
+              rows={2}
+            />
+          </div>
+          
+          <div className="form-row">
+            <div className="form-group flex-1">
+              <label>{t("inventory.fields.type", "Type")}</label>
+              <select
+                className="form-select"
+                value={type}
+                onChange={(e) => setType(e.target.value as FieldType)}
+              >
+                <option value="SingleLineText">
+                  {t("inventory.fields.types.singleLineText", "Single Line Text")}
+                </option>
+                <option value="MultiLineText">
+                  {t("inventory.fields.types.multiLineText", "Multi Line Text")}
+                </option>
+                <option value="Numeric">
+                  {t("inventory.fields.types.numeric", "Numeric")}
+                </option>
+                <option value="Link">
+                  {t("inventory.fields.types.link", "Link")}
+                </option>
+                <option value="Boolean">
+                  {t("inventory.fields.types.boolean", "Yes/No (Boolean)")}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div className="form-group checkbox-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={displayInTable}
+                onChange={(e) => setDisplayInTable(e.target.checked)}
+              />
+              <span className="checkbox-text">
+                {t("inventory.fields.displayInTable", "Display in table")}
+              </span>
+            </label>
+          </div>
+
+          {(type === "SingleLineText" || type === "MultiLineText") && (
+            <div className={`limit-info ${isTextFieldLimitReached ? 'limit-reached' : ''}`}>
+              <span className="limit-dot"></span>
+              {t(
+                "inventory.fields.textFieldsUsed",
+                "Text fields: {{count}}/{{max}} used",
+                { count: textFieldCount, max: maxTextFields },
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="modal-footer">
+          <button onClick={onClose} className="btn-cancel">
             {t("common.cancel", "Cancel")}
           </button>
           <button
             onClick={handleSubmit}
             disabled={!title.trim() || isTextFieldLimitReached}
-            className="submit-btn"
+            className="btn-submit"
           >
             {t("common.add", "Add")}
           </button>
         </div>
+
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -486,69 +512,158 @@ const AddFieldModal: React.FC<{
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
           }
-          .modal-content {
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          .field-modal {
             background: var(--bg-card);
-            padding: 20px;
-            border-radius: var(--radius-md);
-            width: 400px;
-            max-width: 90vw;
+            border-radius: var(--radius-lg);
+            width: 440px;
+            max-width: 95vw;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
           }
-          .form-group {
-            margin-bottom: 15px;
+          @keyframes scaleUp {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
           }
+          .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+          }
+          .modal-header h3 {
+            margin: 0;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+          }
+          .close-x {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            transition: color 0.2s;
+          }
+          .close-x:hover { color: var(--text-primary); }
+          
+          .modal-body { padding: 24px; }
+          .modal-footer {
+            padding: 16px 24px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+          }
+          
+          .form-group { margin-bottom: 20px; }
+          .form-group:last-child { margin-bottom: 0; }
           .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            font-size: 0.875rem;
             font-weight: 600;
+            color: var(--text-secondary);
           }
-          .form-group input,
-          .form-group select {
+          .form-input, .form-select {
             width: 100%;
-            padding: 8px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
             border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+          }
+          textarea.form-input { resize: vertical; min-height: 80px; }
+          .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
+          }
+          
+          .form-row { display: flex; gap: 16px; }
+          .flex-1 { flex: 1; }
+          
+          .checkbox-group {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            margin-top: 4px;
           }
           .checkbox-label {
             display: flex;
             align-items: center;
-            gap: 8px;
-          }
-          .limit-info {
-            color: ${isTextFieldLimitReached ? "var(--danger)" : "#d97706"};
-            font-size: 0.875rem;
-            margin-bottom: 15px;
-          }
-          .modal-actions {
-            display: flex;
-            justify-content: flex-end;
             gap: 10px;
+            cursor: pointer;
+            user-select: none;
           }
-          .cancel-btn {
-            background: var(--bg-secondary);
+          .checkbox-text { font-size: 0.95rem; color: var(--text-primary); }
+          .checkbox-label input { width: 18px; height: 18px; cursor: pointer; }
+          
+          .limit-info {
+            margin-top: 12px;
+            font-size: 0.825rem;
+            color: #d97706;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #fffbeb;
+            border-radius: var(--radius-sm);
+            border: 1px solid #fef3c7;
+          }
+          .limit-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+          .limit-reached { color: var(--danger); background: #fef2f2; border-color: #fee2e2; }
+          
+          .btn-cancel, .btn-submit {
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+          .btn-cancel {
+            background: transparent;
             border: 1px solid var(--border);
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
+            color: var(--text-secondary);
           }
-          .submit-btn {
+          .btn-cancel:hover { background: var(--bg-primary); color: var(--text-primary); }
+          
+          .btn-submit {
             background: var(--accent);
-            color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
+            color: white;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
           }
-          .submit-btn:hover:not(:disabled) {
+          .btn-submit:hover:not(:disabled) {
             background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
           }
-          .submit-btn:disabled {
+          .btn-submit:active:not(:disabled) { transform: translateY(0); }
+          .btn-submit:disabled {
             background: var(--text-muted);
+            opacity: 0.6;
             cursor: not-allowed;
           }
         `,
@@ -581,54 +696,69 @@ const EditFieldModal: React.FC<{
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h3>{t("inventory.fields.editField", "Edit Field")}</h3>
-        <div className="form-group">
-          <label>{t("inventory.fields.title", "Title")} *</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder={t(
-              "inventory.fields.titlePlaceholder",
-              "Enter field title",
-            )}
-          />
+      <div className="modal-content field-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>{t("inventory.fields.editField", "Edit Field")}</h3>
+          <button className="close-x" onClick={onClose}>&times;</button>
         </div>
-        <div className="form-group">
-          <label>{t("inventory.fields.description", "Description")}</label>
-          <input
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder={t(
-              "inventory.fields.descriptionPlaceholder",
-              "Optional description",
-            )}
-          />
-        </div>
-        <div className="form-group">
-          <label className="checkbox-label">
+
+        <div className="modal-body">
+          <div className="form-group">
+            <label>{t("inventory.fields.title", "Title")} *</label>
             <input
-              type="checkbox"
-              checked={displayInTable}
-              onChange={(e) => setDisplayInTable(e.target.checked)}
+              type="text"
+              className="form-input"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={t(
+                "inventory.fields.titlePlaceholder",
+                "Enter field title",
+              )}
+              autoFocus
             />
-            {t("inventory.fields.displayInTable", "Display in table")}
-          </label>
+          </div>
+          
+          <div className="form-group">
+            <label>{t("inventory.fields.description", "Description")}</label>
+            <textarea
+              className="form-input"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder={t(
+                "inventory.fields.descriptionPlaceholder",
+                "Optional description",
+              )}
+              rows={2}
+            />
+          </div>
+
+          <div className="form-group checkbox-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={displayInTable}
+                onChange={(e) => setDisplayInTable(e.target.checked)}
+              />
+              <span className="checkbox-text">
+                {t("inventory.fields.displayInTable", "Display in table")}
+              </span>
+            </label>
+          </div>
         </div>
-        <div className="modal-actions">
-          <button onClick={onClose} className="cancel-btn">
+
+        <div className="modal-footer">
+          <button onClick={onClose} className="btn-cancel">
             {t("common.cancel", "Cancel")}
           </button>
           <button
             onClick={handleSubmit}
             disabled={!title.trim()}
-            className="submit-btn"
+            className="btn-submit"
           >
             {t("common.save", "Save")}
           </button>
         </div>
+        
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -638,63 +768,140 @@ const EditFieldModal: React.FC<{
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            animation: fadeIn 0.2s ease-out;
           }
-          .modal-content {
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          .field-modal {
             background: var(--bg-card);
-            padding: 20px;
-            border-radius: var(--radius-md);
-            width: 400px;
-            max-width: 90vw;
+            border-radius: var(--radius-lg);
+            width: 440px;
+            max-width: 95vw;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
           }
-          .form-group {
-            margin-bottom: 15px;
+          @keyframes scaleUp {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
           }
+          .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+          }
+          .modal-header h3 {
+            margin: 0;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+          }
+          .close-x {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            transition: color 0.2s;
+          }
+          .close-x:hover { color: var(--text-primary); }
+          
+          .modal-body { padding: 24px; }
+          .modal-footer {
+            padding: 16px 24px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+          }
+          
+          .form-group { margin-bottom: 20px; }
+          .form-group:last-child { margin-bottom: 0; }
           .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            font-size: 0.875rem;
             font-weight: 600;
+            color: var(--text-secondary);
           }
-          .form-group input {
+          .form-input {
             width: 100%;
-            padding: 8px;
+            padding: 10px 12px;
+            background: var(--bg-primary);
             border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+          }
+          textarea.form-input { resize: vertical; min-height: 80px; }
+          .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
+          }
+          
+          .checkbox-group {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            margin-top: 4px;
           }
           .checkbox-label {
             display: flex;
             align-items: center;
-            gap: 8px;
-          }
-          .modal-actions {
-            display: flex;
-            justify-content: flex-end;
             gap: 10px;
+            cursor: pointer;
+            user-select: none;
           }
-          .cancel-btn {
-            background: var(--bg-secondary);
+          .checkbox-text { font-size: 0.95rem; color: var(--text-primary); }
+          .checkbox-label input { width: 18px; height: 18px; cursor: pointer; }
+          
+          .btn-cancel, .btn-submit {
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+          .btn-cancel {
+            background: transparent;
             border: 1px solid var(--border);
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
+            color: var(--text-secondary);
           }
-          .submit-btn {
+          .btn-cancel:hover { background: var(--bg-primary); color: var(--text-primary); }
+          
+          .btn-submit {
             background: var(--accent);
-            color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
+            color: white;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
           }
-          .submit-btn:hover:not(:disabled) {
+          .btn-submit:hover:not(:disabled) {
             background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
           }
-          .submit-btn:disabled {
+          .btn-submit:active:not(:disabled) { transform: translateY(0); }
+          .btn-submit:disabled {
             background: var(--text-muted);
+            opacity: 0.6;
             cursor: not-allowed;
           }
         `,

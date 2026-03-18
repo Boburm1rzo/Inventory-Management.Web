@@ -44,24 +44,15 @@ const HomePage: React.FC = () => {
           {t("nav.inventories", "Inventory Management")}
         </span>
         <h1 className="hero-title mt-3 mb-3">
-          Manage everything, effortlessly.
+          {t("home.hero.title", "Manage everything, effortlessly.")}
         </h1>
         <p className="hero-subtitle mb-4">
-          A modern, lightning-fast platform to track your assets, collaborate
-          with your team, and stay organized.
+          {t("home.hero.subtitle", "A modern, lightning-fast platform to track your assets, collaborate with your team, and stay organized.")}
         </p>
         <div className="d-flex justify-content-center gap-3">
           <Link to="/inventories" className="btn-primary-custom">
-            Browse Inventories
+            {t("home.hero.browseBtn", "Browse Inventories")}
           </Link>
-          {isAuthenticated && (
-            <Link
-              to="/inventories?create=true"
-              className="btn-secondary-custom"
-            >
-              {t("inventories.createBtn", "New Inventory")}
-            </Link>
-          )}
         </div>
       </section>
 

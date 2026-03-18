@@ -80,6 +80,15 @@ const PART_TYPE_CONFIG: Record<
   },
 };
 
+const INDEX_TO_TYPE: Record<number, IdFormatPartType> = {
+  0: "FixedText",
+  1: "Sequence",
+  2: "Random6Digit",
+  3: "Random9Digit",
+  4: "Guid",
+  5: "DateTime",
+};
+
 const PartCard: React.FC<PartCardProps> = ({
   part,
   canEdit,
@@ -101,12 +110,18 @@ const PartCard: React.FC<PartCardProps> = ({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const config = PART_TYPE_CONFIG[part.type];
+  // Handle both string and numeric types from backend
+  const typeKey = typeof part.type === "number" 
+    ? INDEX_TO_TYPE[part.type as number] 
+    : (part.type as IdFormatPartType);
+    
+  const config = PART_TYPE_CONFIG[typeKey] || PART_TYPE_CONFIG.FixedText;
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(part.config || "");
 
   const handleClick = () => {
-    if (part.type === "FixedText" && canEdit) {
+    // Check for both string name and its numeric representation (0 for FixedText)
+    if ((part.type === "FixedText" || part.type === 0) && canEdit) {
       setIsEditing(true);
       setEditValue(part.config || "");
     }
@@ -244,31 +259,32 @@ const CustomIdTab: React.FC<CustomIdTabProps> = ({ inventoryId, canEdit }) => {
 
   const loadPreview = useCallback(async () => {
     try {
-      setLoading(true);
       const data = await previewId(inventoryId);
       setPreview(data);
     } catch {
       // Ignore preview errors
-    } finally {
-      setLoading(false);
     }
   }, [inventoryId]);
 
   useEffect(() => {
-    loadParts();
-    loadPreview();
+    const init = async () => {
+      setLoading(true);
+      await Promise.all([loadParts(), loadPreview()]);
+      setLoading(false);
+    };
+    init();
   }, [loadParts, loadPreview]);
 
   const handleAddPart = async (type: IdFormatPartType) => {
     const dto: CreateIdFormatPartDto = { type };
-    if (type === "FixedText") dto.config = "PREFIX-";
+    if (type === "FixedText") dto.config = "FIXED-";
     try {
       const newPart = await addIdFormatPart(inventoryId, dto);
-      setParts([...parts, newPart]);
-      loadPreview();
+      setParts((prev) => [...prev, newPart]);
+      await loadPreview();
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Something went wrong";
+        err instanceof Error ? err.message : "Failed to add part";
       setError(message);
     }
   };
@@ -278,16 +294,19 @@ const CustomIdTab: React.FC<CustomIdTabProps> = ({ inventoryId, canEdit }) => {
       await deleteIdFormatPart(inventoryId, partId);
       setParts(parts.filter((p) => p.id !== partId));
       setDeletePartId(null);
-      loadPreview();
+      await loadPreview();
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Something went wrong";
+        err instanceof Error ? err.message : "Failed to delete part";
       setError(message);
     }
   };
 
-  const handleConfigChange = (partId: number, config: string) => {
+  const handleConfigChange = async (partId: number, config: string) => {
+    // Note: If API supports individual part update, call it here.
+    // For now, updating local state and preview.
     setParts(parts.map((p) => (p.id === partId ? { ...p, config } : p)));
+    setTimeout(() => loadPreview(), 100);
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -301,141 +320,214 @@ const CustomIdTab: React.FC<CustomIdTabProps> = ({ inventoryId, canEdit }) => {
         await reorderIdFormatParts(inventoryId, {
           orderedIds: newParts.map((p: InventoryIdFormatPartDto) => p.id),
         });
-        loadPreview();
+        await loadPreview();
       } catch (err) {
         const message =
-          err instanceof Error ? err.message : "Something went wrong";
+          err instanceof Error ? err.message : "Failed to reorder";
         setError(message);
-        // Revert on error
-        setParts(parts);
+        setParts(parts); // Revert
       }
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <ErrorAlert message={error} />;
+  if (loading) return (
+    <div className="p-5 text-center text-muted">
+      <div className="spinner-border spinner-border-sm me-2"></div>
+      Loading configuration...
+    </div>
+  );
 
   return (
     <div className="custom-id-tab">
-      <div className="preview-section">
-        <h3>{t("inventory.customId.preview", "PREVIEW")}</h3>
-        <div className="preview-box">
-          <span className="preview-text">
-            {preview || "No parts added yet"}
-          </span>
-          <button onClick={loadPreview} className="refresh-btn">
-            🔄 {t("common.refresh", "Refresh")}
+      <div className="preview-section card-style">
+        <div className="section-title-box">
+          <h3>{t("inventory.customId.preview", "Format Preview")}</h3>
+          <button onClick={loadPreview} className="refresh-icon-btn" title="Refresh Preview">
+            🔄
           </button>
         </div>
+        <div className="preview-box">
+          <code>{preview || "--- No Parts Configured ---"}</code>
+        </div>
+        <p className="preview-hint">This is how your item IDs will look when generated.</p>
       </div>
-      <div className="parts-section">
-        <h3>{t("inventory.customId.parts", "ID PARTS (drag to reorder)")}</h3>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={parts.map((p) => p.id)}
-            strategy={verticalListSortingStrategy}
+
+      <div className="parts-section card-style">
+        <h3>{t("inventory.customId.parts", "Structure (Drag to Reorder)")}</h3>
+        {parts.length === 0 ? (
+          <div className="empty-parts">
+            No parts added yet. Use the buttons below to build your ID format.
+          </div>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
           >
-            {parts.map((part) => (
-              <PartCard
-                key={part.id}
-                part={part}
-                canEdit={canEdit}
-                onDelete={setDeletePartId}
-                onConfigChange={handleConfigChange}
-              />
-            ))}
-          </SortableContext>
-        </DndContext>
+            <SortableContext
+              items={parts.map((p) => p.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="parts-list">
+                {parts.map((part) => (
+                  <PartCard
+                    key={part.id}
+                    part={part}
+                    canEdit={canEdit}
+                    onDelete={setDeletePartId}
+                    onConfigChange={handleConfigChange}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        )}
       </div>
+
       {canEdit && (
-        <div className="add-parts-section">
-          <h3>{t("inventory.customId.addParts", "ADD PARTS")}</h3>
-          <div className="add-buttons">
+        <div className="add-parts-section card-style">
+          <h3>{t("inventory.customId.addParts", "Available Components")}</h3>
+          <div className="add-grid">
             {Object.entries(PART_TYPE_CONFIG).map(([type, config]) => (
               <button
                 key={type}
                 onClick={() => handleAddPart(type as IdFormatPartType)}
-                className="add-part-btn"
-                style={{ borderColor: config.color }}
+                className="add-part-card"
+                style={{ "--accent-color": config.color } as any}
               >
-                {config.label}
+                <span className="add-icon">+</span>
+                <div className="add-info">
+                  <span className="add-label">{config.label}</span>
+                  <span className="add-desc">{config.description}</span>
+                </div>
               </button>
             ))}
           </div>
         </div>
       )}
+
       {deletePartId && (
         <ConfirmModal
           isOpen={true}
-          title={t("inventory.customId.confirmDelete", "Delete Part")}
+          title={t("inventory.customId.confirmDelete", "Remove Component")}
           message={t(
             "inventory.customId.confirmDeleteMessage",
-            "Are you sure you want to delete this part?",
+            "Are you sure you want to remove this component from the ID format?",
           )}
           onConfirm={() => handleDeletePart(deletePartId)}
           onCancel={() => setDeletePartId(null)}
         />
       )}
+
       <style
         dangerouslySetInnerHTML={{
           __html: `
         .custom-id-tab {
-          padding: 20px;
+          padding: 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
         }
-        .preview-section {
-          margin-bottom: 30px;
+        .card-style {
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-lg);
+          padding: 1.25rem;
+          box-shadow: var(--shadow-sm);
+        }
+        .card-style h3 {
+          font-size: 0.9rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: var(--text-secondary);
+          margin-bottom: 1rem;
+        }
+        .section-title-box {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
         }
         .preview-box {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 16px;
+          background: var(--bg-primary);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-md);
+          padding: 1.5rem;
+          text-align: center;
+          margin-bottom: 0.75rem;
+        }
+        .preview-box code {
+          font-family: 'JetBrains Mono', 'Fira Code', monospace;
+          font-size: 1.75rem;
+          font-weight: 700;
+          color: var(--accent);
+          word-break: break-all;
+        }
+        .preview-hint {
+          font-size: 0.8rem;
+          color: var(--text-muted);
+          margin: 0;
+        }
+        .refresh-icon-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 1.25rem;
+          padding: 4px;
+          border-radius: 4px;
+          transition: background 0.2s;
+        }
+        .refresh-icon-btn:hover { background: var(--bg-secondary); }
+
+        .empty-parts {
+          padding: 2rem;
+          text-align: center;
+          color: var(--text-muted);
           border: 2px dashed var(--border);
           border-radius: var(--radius-md);
-          background: var(--bg-secondary);
-          font-family: "Courier New", monospace;
-          font-size: 1.5rem;
+        }
+
+        .add-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+          gap: 0.75rem;
+        }
+        .add-part-card {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          background: var(--bg-primary);
+          border: 1px solid var(--border);
+          padding: 0.75rem;
+          border-radius: var(--radius-md);
+          cursor: pointer;
+          text-align: left;
+          transition: all 0.2s;
+        }
+        .add-part-card:hover {
+          border-color: var(--accent-color);
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-md);
+        }
+        .add-icon {
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--accent-color);
+          color: white;
+          border-radius: 6px;
+          font-size: 1.25rem;
           font-weight: 700;
         }
-        .refresh-btn {
-          background: var(--accent);
-          color: white;
-          border: none;
-          padding: 8px 16px;
-          border-radius: var(--radius-sm);
-          cursor: pointer;
-        }
-        .refresh-btn:hover {
-          background: var(--accent-hover);
-        }
-        .parts-section,
-        .add-parts-section {
-          margin-bottom: 20px;
-        }
-        .add-buttons {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 10px;
-        }
-        .add-part-btn {
-          background: var(--bg-card);
-          border: 2px solid;
-          padding: 12px;
-          border-radius: var(--radius-sm);
-          cursor: pointer;
-          transition: transform 0.15s ease;
-        }
-        .add-part-btn:hover {
-          transform: scale(1.03);
-        }
+        .add-info { display: flex; flex-direction: column; }
+        .add-label { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+        .add-desc { font-size: 0.75rem; color: var(--text-muted); }
       `,
-        }}
-      />
-    </div>
+          }}
+        />
+      </div>
   );
 };
 
