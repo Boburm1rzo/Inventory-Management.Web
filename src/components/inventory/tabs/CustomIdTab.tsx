@@ -30,7 +30,6 @@ import {
   previewId,
 } from "../../../api/idformat.api";
 import ConfirmModal from "../../common/ConfirmModal";
-import ErrorAlert from "../../common/ErrorAlert";
 
 interface CustomIdTabProps {
   inventoryId: number;

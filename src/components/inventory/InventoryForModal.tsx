@@ -119,7 +119,7 @@ const InventoryFormModal: React.FC<Props> = ({
       onSuccess();
       onClose();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t("errors.general", "Xatolik yuz berdi"));
+      setError(err instanceof Error ? err.message : t("errors.general", "Something went wrong"));
     } finally {
       setLoading(false);
     }
@@ -194,6 +194,7 @@ const InventoryFormModal: React.FC<Props> = ({
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 disabled={loading}
+                placeholder={t("form.titlePlaceholder")}
               />
             </div>
 
@@ -209,7 +210,7 @@ const InventoryFormModal: React.FC<Props> = ({
             </div>
 
             <div className="mb-3">
-              <label className="form-label">{t("form.imageUrl", "Inventory Image")}</label>
+              <label className="form-label">{t("inventory.settings.cover", "Inventory Image")}</label>
               <ImageUpload
                 value={formData.imageUrl}
                 onChange={(url) => setFormData({ ...formData, imageUrl: url })}
@@ -268,7 +269,7 @@ const InventoryFormModal: React.FC<Props> = ({
                 styles={customSelectStyles}
                 placeholder={t("items.form.tagsPlaceholder")}
                 isDisabled={loading}
-                formatCreateLabel={(inputValue) => `Create "${inputValue}"`}
+                formatCreateLabel={(inputValue) => `${t("common.add")} "${inputValue}"`}
               />
             </div>
 

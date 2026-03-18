@@ -8,9 +8,132 @@
       "browseBtn": "Inventarlarni ko'rish"
     },
     "latestTitle": "So'nggi inventarlar", "topTitle": "Eng mashhurlar", "columns": { "title": "Nomi", "category": "Kategoriya", "owner": "Egasi", "createdAt": "Yaratilgan", "itemCount": "Narsalar" } },
-  "inventories": { "title": "Inventarlar", "createBtn": "Yangi inventar", "columns": { "title": "Nomi", "category": "Kategoriya", "owner": "Egasi", "createdAt": "Yaratilgan" }, "empty": "Hozircha inventarlar yo'q", "deleteConfirm": "Bu inventarni o'chirishni xohlaysizmi?" },
+  "inventories": { 
+    "title": "Inventarlar", 
+    "createBtn": "Yangi yaratish", 
+    "columns": { "title": "Nomi", "category": "Kategoriya", "owner": "Egasi", "createdAt": "Yaratilgan" }, 
+    "empty": "Hozircha inventarlar yo'q", 
+    "deleteConfirm": "Bu inventarni o'chirishni xohlaysizmi?" 
+  },
+  "inventory": {
+    "by": "Muallif:",
+    "public": "Ochiq",
+    "notFound": "Inventar topilmadi",
+    "tabs": {
+      "items": "Narsalar",
+      "fields": "Maydonlar",
+      "custom-id": "ID Formati",
+      "settings": "Sozlamalar",
+      "discussion": "Munozara",
+      "access": "Ruxsatlar",
+      "statistics": "Statistika"
+    },
+    "fields": {
+      "title": "Maxsus maydonlar",
+      "addField": "Maydon qo'shish",
+      "editField": "Maydonni tahrirlash",
+      "titleLabel": "Nomi",
+      "descriptionLabel": "Tavsif",
+      "typeLabel": "Turi",
+      "displayInTable": "Jadvalda ko'rsatish",
+      "textFieldsUsed": "Matn maydonlari: {{count}}/{{max}} ishlatildi",
+      "titlePlaceholder": "Maydon nomini kiriting",
+      "descriptionPlaceholder": "Ixtiyoriy tavsif",
+      "confirmDelete": "Maydonni o'chirish",
+      "confirmDeleteMessage": "Haqiqatan ham bu maydonni o'chirmoqchimisiz?",
+      "types": {
+        "singleLineText": "Bir qatorli matn",
+        "multiLineText": "Ko'p qatorli matn",
+        "numeric": "Raqamli",
+        "link": "Havola",
+        "boolean": "Ha/Yo'q (Boolean)"
+      }
+    },
+    "customId": {
+      "preview": "Format ko'rinishi",
+      "parts": "Tuzilishi (Tartiblash uchun torting)",
+      "addParts": "Mavjud komponentlar",
+      "confirmDelete": "Komponentni o'chirish",
+      "confirmDeleteMessage": "Haqiqatan ham bu komponentni ID formatidan o'chirmoqchimisiz?",
+      "hints": {
+        "FixedText": "Maxsus matn prefiksi/suffiksi",
+        "Sequence": "Avtomatik o'suvchi raqam",
+        "Random6Digit": "Tasodifiy 6 xonali raqam",
+        "Random9Digit": "Tasodifiy 9 xonali raqam",
+        "Guid": "Noyob identifikator (8 belgi)",
+        "DateTime": "Joriy sana (yyyyMMdd)"
+      }
+    },
+    "access": {
+      "title": "Kimlar foydalana oladi",
+      "searchUsers": "Foydalanuvchilarni qidirish...",
+      "add": "Qo'shish",
+      "currentAccess": "Hozirgi ruxsatlar",
+      "noAccess": "Hozircha hech kimga ruxsat berilmagan",
+      "addedAt": "Qo'shildi: {{time}}",
+      "remove": "Ruxsatni olib tashlash",
+      "confirmRemoveTitle": "Ruxsatni olib tashlash",
+      "confirmRemoveMessage": "Haqiqatan ham {{name}} uchun ruxsatni olib tashlamoqchimisiz?"
+    },
+    "settings": {
+      "general": "Umumiy sozlamalar",
+      "cover": "Inventar rasmi",
+      "title": "Nomi",
+      "description": "Tavsif",
+      "category": "Kategoriya",
+      "visibility": "Ko'rinuvchanlik",
+      "public": "Ochiq inventar",
+      "private": "Yopiq inventar",
+      "tags": "Kalit so'zlar va teglar",
+      "tagsPlaceholder": "Qidirish yoki yangi teg yaratish uchun yozing...",
+      "saveChanges": "O'zgarishlarni saqlash",
+      "dangerZone": "Xavfli hudud",
+      "deleteTitle": "Ushbu inventarni o'chirish",
+      "deleteDesc": "Inventar o'chirilgandan so'ng, uning ichidagi barcha narsalar, maydonlar va ma'lumotlar butunlay yo'qoladi. Bu amalni ortga qaytarib bo'lmaydi.",
+      "deleteBtn": "Butunlay o'chirish",
+      "saveSuccess": "O'zgarishlar muvaffaqiyatli saqlandi!"
+    },
+    "statistics": {
+      "totalItems": "Jami narsalar",
+      "totalLikes": "Jami layklar",
+      "addedOverTime": "Vaqtlar bo'yicha qo'shilgan narsalar"
+    }
+  },
+  "discussion": {
+    "title": "Munozara",
+    "connected": "Onlayn",
+    "reconnecting": "Qayta ulanmoqda...",
+    "disconnected": "Offlayn",
+    "connecting": "Ulanmoqda...",
+    "noPosts": "Hozircha xabarlar yo'q. Munozarani boshlang!",
+    "writeMessage": "Xabar yozing...",
+    "send": "Yuborish",
+    "markdownSupported": "Markdown qo'llab-quvvatlanadi. Yuborish uchun Ctrl+Enter.",
+    "loginRequired": "Munozaraga qo'shilish uchun tizimga kiring",
+    "deletePost": "Xabarni o'chirish"
+  },
   "form": { "inventoryTitle": "Nomi", "description": "Tavsif", "category": "Kategoriya", "isPublic": "Ochiq inventar", "save": "Saqlash", "cancel": "Bekor qilish", "create": "Yaratish", "titlePlaceholder": "Inventar nomini kiriting" },
-  "errors": { "general": "Xatolik yuz berdi", "network": "Ulanishda xatolik. Qaytadan urinib ko'ring.", "unauthorized": "Davom etish uchun tizimga kiring.", "forbidden": "Sizda ruxsat yo'q.", "conflict": "Boshqa kimdir bu yozuvni o'zgartirdi. Sahifani yangilang.", "notFound": "Topilmadi." },
-  "common": { "loading": "Yuklanmoqda...", "noData": "Ma'lumot yo'q", "actions": "Amallar", "edit": "Tahrirlash", "delete": "O'chirish", "confirm": "Tasdiqlash", "close": "Yopish" },
-  "theme": { "light": "Yorug'", "dark": "Qorong'i" }
+  "errors": { "general": "Xatolik yuz berdi", "network": "Ulanishda xatolik. Qaytadan urinib ko'ring.", "unauthorized": "Davom etish uchun tizimga kiring.", "forbidden": "Sizda ruxsat yo'q.", "conflict": "Boshqa kimdir bu yozuvni o'zgartirdi. Sahifani yangilang.", "notFound": "Topilmadi.", "required": "Ushbu maydon to'ldirilishi shart." },
+  "common": { "loading": "Yuklanmoqda...", "noData": "Ma'lumot yo'q", "actions": "Amallar", "edit": "Tahrirlash", "delete": "O'chirish", "confirm": "Tasdiqlash", "close": "Yopish", "back": "Oldingi", "refresh": "Yangilash", "add": "Qo'shish", "save": "Saqlash", "select": "Tanlang...", "page": "Sahifa", "next": "Keyingi" },
+  "theme": { "light": "Yorug'", "dark": "Qorong'i" },
+  "items": {
+    "title": "Narsalar",
+    "add": "Narsa qo'shish",
+    "empty": "Ushbu inventarda hech narsa topilmadi.",
+    "columns": { "customId": "Maxsus ID", "tags": "Teglar", "createdAt": "Yaratilgan", "updatedAt": "Yangilangan" },
+    "form": { "tags": "Teglar", "tagsPlaceholder": "Teglarni vergul bilan ajratib kiriting", "customFields": "Maxsus maydonlar", "stringField": "Matn maydoni {{index}}", "textField": "Katta matn maydoni {{index}}", "numberField": "Raqamli maydon {{index}}", "linkField": "Havola maydoni {{index}}", "booleanField": "Mantiqiy maydon {{index}}" },
+    "tabs": { "details": "Tafsilotlar", "edit": "Tahrirlash" },
+    "pageTitle": "Narsa: {{customId}}",
+    "createTitle": "Yangi narsa yaratish",
+    "customId": "Maxsus ID",
+    "tags": "Teglar",
+    "createdAt": "Yaratilgan",
+    "updatedAt": "Yangilangan",
+    "customFields": "Maxsus maydonlar",
+    "notFound": "Narsa topilmadi",
+    "confirmDeleteTitle": "Narsani o'chirish",
+    "confirmDeleteMessage": "Haqiqatan ham bu narsani o'chirmoqchimisiz?",
+    "createNew": "Yangi narsa yaratish",
+    "noItems": "Hech narsa topilmadi."
+  }
 }

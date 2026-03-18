@@ -38,15 +38,15 @@ const InventoryTable: React.FC<Props> = ({
       <table className="inventory-table w-100">
         <thead>
           <tr>
-            <th>{t("home.columns.title", "Title")}</th>
-            <th>{t("home.columns.category", "Category")}</th>
-            <th>{t("home.columns.owner", "Owner")}</th>
-            <th>{t("home.columns.createdAt", "Created")}</th>
+            <th>{t("inventories.columns.title", "Title")}</th>
+            <th>{t("inventories.columns.category", "Category")}</th>
+            <th>{t("inventories.columns.owner", "Owner")}</th>
+            <th>{t("inventories.columns.createdAt", "Created")}</th>
             {inventories[0]?.itemCount !== undefined && (
               <th>{t("home.columns.itemCount", "Items")}</th>
             )}
             {showActions && (
-              <th className="action-col text-end">{t("common.actions", "")}</th>
+              <th className="action-col text-end">{t("common.actions", "Actions")}</th>
             )}
           </tr>
         </thead>

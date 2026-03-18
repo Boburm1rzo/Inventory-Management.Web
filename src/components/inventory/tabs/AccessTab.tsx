@@ -386,6 +386,7 @@ const AccessTab: React.FC<AccessTabProps> = ({ inventoryId, canManage }) => {
         />
       )}
 
+
       <style>{`
         .user-option:hover:not(.disabled) {
           background: var(--bg-secondary);

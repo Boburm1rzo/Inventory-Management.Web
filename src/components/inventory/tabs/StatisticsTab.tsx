@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   AreaChart,
   Area,
@@ -15,6 +16,7 @@ interface StatisticsTabProps {
 }
 
 const StatisticsTab: React.FC<StatisticsTabProps> = ({ inventoryId }) => {
+  const { t } = useTranslation();
   // Mock data generation moved to useMemo to be pure during render
   const mockData = useMemo(() => {
     return Array.from({ length: 14 }, (_, i) => ({
@@ -94,7 +96,7 @@ const StatisticsTab: React.FC<StatisticsTabProps> = ({ inventoryId }) => {
             <Package size={24} />
           </div>
           <div className="stat-info">
-            <h4>Total Items</h4>
+            <h4>{t("inventory.statistics.totalItems", "Total Items")}</h4>
             <p>{stats.totalItems.toLocaleString()}</p>
           </div>
         </div>
@@ -103,7 +105,7 @@ const StatisticsTab: React.FC<StatisticsTabProps> = ({ inventoryId }) => {
             <Heart size={24} />
           </div>
           <div className="stat-info">
-            <h4>Total Likes</h4>
+            <h4>{t("inventory.statistics.totalLikes", "Total Likes")}</h4>
             <p>{stats.totalLikes.toLocaleString()}</p>
           </div>
         </div>
@@ -111,7 +113,7 @@ const StatisticsTab: React.FC<StatisticsTabProps> = ({ inventoryId }) => {
 
       <div className="chart-container">
         <div className="chart-header">
-          <h3>Items Added Over Time</h3>
+          <h3>{t("inventory.statistics.addedOverTime", "Items Added Over Time")}</h3>
         </div>
         <div style={{ width: "100%", height: 300 }}>
           <ResponsiveContainer width="100%" height="100%">
