@@ -32,6 +32,8 @@ import {
 import ConfirmModal from "../../common/ConfirmModal";
 import ErrorAlert from "../../common/ErrorAlert";
 
+import "../../../styles/components/inventory/tabs/CustomIdTab.css";
+
 interface CustomIdTabProps {
   inventoryId: number;
   canEdit: boolean;
@@ -144,7 +146,11 @@ const PartCard: React.FC<PartCardProps> = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="part-card"
+      className={`part-card ${
+        (part.type === "FixedText" || part.type === 0) && canEdit
+          ? "cursor-pointer"
+          : ""
+      }`}
       onClick={handleClick}
     >
       <div className="drag-handle" {...attributes} {...listeners}>
@@ -172,72 +178,16 @@ const PartCard: React.FC<PartCardProps> = ({
       </div>
       {canEdit && (
         <button
-          onClick={() => onDelete(part.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(part.id);
+          }}
           className="delete-btn"
           title={t("common.delete", "Delete")}
         >
           ×
         </button>
       )}
-
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        .part-card {
-          display: flex;
-          align-items: center;
-          padding: 12px;
-          border: 1px solid var(--border);
-          border-radius: var(--radius-sm);
-          background: var(--bg-card);
-          margin-bottom: 8px;
-          gap: 12px;
-          cursor: ${
-            part.type === "FixedText" && canEdit ? "pointer" : "default"
-          };
-        }
-        .drag-handle {
-          cursor: grab;
-          color: var(--text-muted);
-          padding: 4px;
-          border-radius: 4px;
-        }
-        .drag-handle:hover {
-          color: var(--text-secondary);
-          background: var(--bg-secondary);
-        }
-        .drag-handle:active {
-          cursor: grabbing;
-        }
-        .part-type {
-          color: white;
-          font-weight: bold;
-          padding: 4px 8px;
-          border-radius: 4px;
-        }
-        .part-content {
-          flex: 1;
-        }
-        .part-content input {
-          width: 100%;
-          border: 1px solid var(--border);
-          border-radius: 4px;
-          padding: 4px;
-        }
-        .delete-btn {
-          background: none;
-          border: none;
-          cursor: pointer;
-          color: var(--danger);
-          font-size: 18px;
-        }
-        .delete-btn:hover {
-          background: var(--danger);
-          color: white;
-        }
-      `,
-        }}
-      />
     </div>
   );
 };
@@ -366,7 +316,7 @@ const CustomIdTab: React.FC<CustomIdTabProps> = ({ inventoryId, canEdit }) => {
           <code>{preview || "--- No Parts Configured ---"}</code>
         </div>
         <p className="preview-hint">
-          This is how your item IDs will look when generated.
+          {t("inventory.customId.hints.previewDescription", "This is how your item IDs will look when generated.")}
         </p>
       </div>
 
@@ -374,7 +324,7 @@ const CustomIdTab: React.FC<CustomIdTabProps> = ({ inventoryId, canEdit }) => {
         <h3>{t("inventory.customId.parts", "Structure (Drag to Reorder)")}</h3>
         {parts.length === 0 ? (
           <div className="empty-parts">
-            No parts added yet. Use the buttons below to build your ID format.
+            {t("inventory.customId.noParts", "No parts added yet. Use the buttons below to build your ID format.")}
           </div>
         ) : (
           <DndContext
@@ -415,8 +365,8 @@ const CustomIdTab: React.FC<CustomIdTabProps> = ({ inventoryId, canEdit }) => {
               >
                 <span className="add-icon">+</span>
                 <div className="add-info">
-                  <span className="add-label">{config.label}</span>
-                  <span className="add-desc">{config.description}</span>
+                  <span className="add-label">{t(`inventory.customId.types.${type}`, config.label)}</span>
+                  <span className="add-desc">{t(`inventory.customId.hints.${type}`, config.description)}</span>
                 </div>
               </button>
             ))}
@@ -436,115 +386,6 @@ const CustomIdTab: React.FC<CustomIdTabProps> = ({ inventoryId, canEdit }) => {
           onCancel={() => setDeletePartId(null)}
         />
       )}
-
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        .custom-id-tab {
-          padding: 1rem;
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-        }
-        .card-style {
-          background: var(--bg-card);
-          border: 1px solid var(--border);
-          border-radius: var(--radius-lg);
-          padding: 1.25rem;
-          box-shadow: var(--shadow-sm);
-        }
-        .card-style h3 {
-          font-size: 0.9rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          color: var(--text-secondary);
-          margin-bottom: 1rem;
-        }
-        .section-title-box {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .preview-box {
-          background: var(--bg-primary);
-          border: 1px solid var(--border);
-          border-radius: var(--radius-md);
-          padding: 1.5rem;
-          text-align: center;
-          margin-bottom: 0.75rem;
-        }
-        .preview-box code {
-          font-family: 'JetBrains Mono', 'Fira Code', monospace;
-          font-size: 1.75rem;
-          font-weight: 700;
-          color: var(--accent);
-          word-break: break-all;
-        }
-        .preview-hint {
-          font-size: 0.8rem;
-          color: var(--text-muted);
-          margin: 0;
-        }
-        .refresh-icon-btn {
-          background: none;
-          border: none;
-          cursor: pointer;
-          font-size: 1.25rem;
-          padding: 4px;
-          border-radius: 4px;
-          transition: background 0.2s;
-        }
-        .refresh-icon-btn:hover { background: var(--bg-secondary); }
-
-        .empty-parts {
-          padding: 2rem;
-          text-align: center;
-          color: var(--text-muted);
-          border: 2px dashed var(--border);
-          border-radius: var(--radius-md);
-        }
-
-        .add-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-          gap: 0.75rem;
-        }
-        .add-part-card {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          background: var(--bg-primary);
-          border: 1px solid var(--border);
-          padding: 0.75rem;
-          border-radius: var(--radius-md);
-          cursor: pointer;
-          text-align: left;
-          transition: all 0.2s;
-        }
-        .add-part-card:hover {
-          border-color: var(--accent-color);
-          transform: translateY(-2px);
-          box-shadow: var(--shadow-md);
-        }
-        .add-icon {
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: var(--accent-color);
-          color: white;
-          border-radius: 6px;
-          font-size: 1.25rem;
-          font-weight: 700;
-        }
-        .add-info { display: flex; flex-direction: column; }
-        .add-label { font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
-        .add-desc { font-size: 0.75rem; color: var(--text-muted); }
-      `,
-        }}
-      />
     </div>
   );
 };

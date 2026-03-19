@@ -153,13 +153,16 @@ const InventoryPage: React.FC = () => {
         dangerouslySetInnerHTML={{
           __html: `
         .inventory-page {
-          padding: 20px;
+          padding: 1.5rem 1rem;
+          max-width: 1200px;
+          margin: 0 auto;
         }
         .page-header {
           display: flex;
-          align-items: center;
-          gap: 20px;
-          margin-bottom: 30px;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+          margin-bottom: 2rem;
         }
         .back-link {
           color: var(--accent);
@@ -170,7 +173,10 @@ const InventoryPage: React.FC = () => {
         }
         .inventory-info h1 {
           margin: 0;
+          font-size: 2rem;
+          font-weight: 800;
           color: var(--text-primary);
+          line-height: 1.2;
         }
         .inventory-info p {
           margin: 5px 0;
@@ -182,12 +188,21 @@ const InventoryPage: React.FC = () => {
           padding: 4px 8px;
           border-radius: var(--radius-sm);
           font-size: 0.75rem;
+          display: inline-block;
+          margin-top: 0.5rem;
         }
         .tabs {
           display: flex;
+          gap: 0.5rem;
           border-bottom: 1px solid var(--border);
-          margin-bottom: 20px;
+          margin-bottom: 1.5rem;
+          overflow-x: auto;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          padding-bottom: 1px;
         }
+        .tabs::-webkit-scrollbar { display: none; }
+        
         .tab-button {
           background: none;
           border: none;
@@ -196,6 +211,7 @@ const InventoryPage: React.FC = () => {
           color: var(--text-secondary);
           border-bottom: 2px solid transparent;
           transition: 0.15s ease;
+          white-space: nowrap;
         }
         .tab-button:hover {
           color: var(--text-primary);
@@ -206,6 +222,12 @@ const InventoryPage: React.FC = () => {
         }
         .tab-content {
           min-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+          .inventory-page { padding: 20px; }
+          .page-header { flex-direction: row; align-items: center; justify-content: space-between; gap: 20px; }
+          .inventory-info h1 { font-size: 2.5rem; }
         }
       `,
         }}

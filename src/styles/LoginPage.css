@@ -8,6 +8,15 @@
   width: 100%; max-width: 420px; background: var(--bg-card); padding: 40px;
   border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 1px solid var(--border);
 }
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 24px 20px;
+  }
+  .auth-title {
+    font-size: 1.5rem;
+  }
+}
 .auth-title { font-size: 1.75rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem; }
 .auth-subtitle { font-size: 0.875rem; color: var(--text-secondary); }
 

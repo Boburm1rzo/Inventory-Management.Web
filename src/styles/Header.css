@@ -8,10 +8,27 @@
   box-shadow: var(--shadow-sm);
   z-index: 1000;
 }
-.max-w-1200 { max-width: 1200px; margin: 0 auto; }
-.logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--text-primary); }
+.max-w-1200 { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+.logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.25rem; color: var(--text-primary); white-space: nowrap; }
 
-.search-container { position: relative; width: 300px; }
+.search-container { position: relative; width: 300px; transition: all 0.3s ease; }
+
+@media (max-width: 992px) {
+  .search-container { width: 200px; }
+}
+
+@media (max-width: 768px) {
+  .search-container { display: none; }
+  .logo-text { font-size: 1rem; }
+  .btn-auth { padding: 6px 12px; font-size: 0.75rem; }
+  .lang-switcher { display: none !important; } /* Hide lang switcher on mobile to save space */
+}
+
+@media (max-width: 480px) {
+  .app-header { padding: 0 0.5rem; }
+  .logo-text { display: none; } /* Hide logo text, only icon if exists */
+  /* If there is a logo icon, show it here */
+}
 .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 .search-input {
   width: 100%; padding: 8px 16px 8px 36px;

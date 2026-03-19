@@ -21,6 +21,7 @@ import ConfirmModal from "../../common/ConfirmModal";
 import EmptyState from "../../common/EmptyState";
 import LikeButton from "../../common/LikeButton";
 import { timeAgo } from "../../../utils/time";
+import "../../../styles/components/inventory/tabs/ItemsTab.css";
 
 import ItemForm from "../../item/ItemForm";
 
@@ -113,109 +114,6 @@ const ItemsTab: React.FC<ItemsTabProps> = ({
 
   return (
     <div className="items-tab">
-      <style>{`
-        .items-tab-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.5rem;
-        }
-        .items-table-container {
-          background: var(--bg-card);
-          border-radius: var(--radius-md);
-          border: 1px solid var(--border);
-          overflow-x: auto;
-        }
-        .items-table {
-          width: 100%;
-          border-collapse: collapse;
-          font-size: 14px;
-        }
-        .items-table th, .items-table td {
-          padding: 14px 16px;
-          text-align: left;
-          border-bottom: 1px solid var(--border);
-        }
-        .items-table th {
-          background: var(--bg-secondary);
-          color: var(--text-secondary);
-          font-weight: 700;
-          text-transform: uppercase;
-          font-size: 11px;
-          letter-spacing: 0.05em;
-        }
-        .items-table tr {
-          transition: background 0.2s;
-        }
-        .items-table tr:last-child td { border-bottom: none; }
-        .items-table tr:hover { background: var(--bg-secondary); }
-        
-        .fw-medium { font-weight: 600; color: var(--text-primary); }
-        .text-muted { color: var(--text-muted); font-size: 0.85rem; }
-
-        .actions-cell {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          opacity: 0.8;
-          transition: opacity 0.2s;
-        }
-        .items-table tr:hover .actions-cell { opacity: 1; }
-        
-        .action-btn {
-          background: none;
-          border: none;
-          padding: 6px;
-          cursor: pointer;
-          color: var(--text-secondary);
-          border-radius: 6px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s;
-        }
-        .action-btn:hover { 
-          background: var(--bg-primary); 
-          color: var(--accent);
-          transform: translateY(-1px);
-        }
-        .action-btn.delete:hover { 
-          color: var(--danger); 
-          background: rgba(239, 68, 68, 0.1); 
-        }
-        
-        /* Ensure LikeButton also follows the muted-to-visible pattern if it has a class */
-        .actions-cell .like-btn {
-          opacity: 0.6;
-          transition: opacity 0.2s;
-        }
-        .actions-cell .like-btn:hover {
-          opacity: 1;
-        }
-        
-        .pagination {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 1rem;
-          margin-top: 1.5rem;
-          color: var(--text-secondary);
-          font-size: 14px;
-        }
-        .page-btn {
-          background: var(--bg-card);
-          border: 1px solid var(--border);
-          border-radius: var(--radius-md);
-          padding: 6px 12px;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          cursor: pointer;
-          color: var(--text-primary);
-        }
-        .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-      `}</style>
-
       <div className="items-tab-header">
         <h3 className="m-0 h5 fw-bold">
           {t("items.title", "Items")} ({data?.totalCount || 0})

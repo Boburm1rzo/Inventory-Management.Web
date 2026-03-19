@@ -99,6 +99,28 @@ a:hover {
 }
 
 /* Utilities */
+.container-custom {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (max-width: 768px) {
+    .container-custom {
+        padding: 0 0.75rem;
+    }
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.25rem; }
+}
+
+/* Base Responsive Fixes */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 .animate-fade-up {
     animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

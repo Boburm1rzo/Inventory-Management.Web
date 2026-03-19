@@ -1,0 +1,89 @@
+.items-tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.items-table-container {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 600px;
+}
+.items-table th, .items-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.items-table th {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+.items-table tr:last-child td { border-bottom: none; }
+.items-table tr:hover { background: var(--bg-secondary); }
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+.items-table tr:hover .actions-cell { opacity: 1; }
+.action-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.action-btn:hover { background: var(--bg-primary); color: var(--text-primary); }
+.action-btn.delete:hover { color: var(--danger); background: #fee2e2; }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+.page-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+.page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 576px) {
+  .items-tab-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .items-tab-header button {
+    width: 100%;
+    justify-content: center;
+  }
+}

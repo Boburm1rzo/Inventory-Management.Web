@@ -320,6 +320,16 @@ const DiscussionTab: React.FC<DiscussionTabProps> = ({ inventoryId }) => {
           align-items: flex-start;
         }
 
+        @media (max-width: 576px) {
+          .input-wrapper {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .send-btn {
+            width: 100%;
+          }
+        }
+
         .input-wrapper textarea {
           flex: 1;
           min-height: 60px;

@@ -1,4 +1,13 @@
 /* styles from Pagination.tsx */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
 .page-btn {
   min-width: 36px; height: 36px; border-radius: var(--radius-sm); border: none;
   background: transparent; color: var(--text-secondary); font-weight: 500;

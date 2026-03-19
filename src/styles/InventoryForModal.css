@@ -10,10 +10,24 @@
 }
 .custom-modal-content {
   background: var(--bg-card);
-  width: 100%;
+  width: 95%;
   max-width: 500px;
   border-radius: 12px;
   border: 1px solid var(--border);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@media (max-width: 576px) {
+  .custom-modal-content {
+    padding: 1.5rem !important;
+  }
+  .custom-modal-content .row > * {
+    margin-bottom: 1rem;
+  }
+  .custom-modal-content .row {
+    margin-bottom: 0;
+  }
 }
 /* override form-control styles inside modal to match theme */
 .custom-modal-content .form-control {
