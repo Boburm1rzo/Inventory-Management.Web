@@ -19,7 +19,6 @@ const ItemPage: React.FC = () => {
     itemId: string;
   }>();
   const navigate = useNavigate();
-
   const [item, setItem] = useState<ItemDto | null>(null);
   const [fields, setFields] = useState<InventoryFieldDto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +41,9 @@ const ItemPage: React.FC = () => {
       setLoading(true);
       const [fieldsData, itemData] = await Promise.all([
         getFields(invId),
-        itId && itId !== "new" ? itemsApi.getItem(invId, parseInt(itId)) : Promise.resolve(null),
+        itId && itId !== "new"
+          ? itemsApi.getItem(invId, parseInt(itId))
+          : Promise.resolve(null),
       ]);
       setFields(fieldsData);
       setItem(itemData);
@@ -103,35 +104,57 @@ const ItemPage: React.FC = () => {
           <div className="card-body">
             <div className="row mb-4">
               <div className="col-md-6">
-                <p className="mb-1 text-muted small">{t("items.customId", "Custom ID")}</p>
+                <p className="mb-1 text-muted small">
+                  {t("items.customId", "Custom ID")}
+                </p>
                 <p className="fw-bold">{item.customId}</p>
               </div>
               <div className="col-md-6">
-                <p className="mb-1 text-muted small">{t("items.createdBy", "Created By")}</p>
+                <p className="mb-1 text-muted small">
+                  {t("items.createdBy", "Created By")}
+                </p>
                 <p className="fw-bold">{item.createdByName}</p>
               </div>
               <div className="col-md-6">
-                <p className="mb-1 text-muted small">{t("items.createdAt", "Created At")}</p>
-                <p className="fw-bold">{new Date(item.createdAt).toLocaleString()}</p>
+                <p className="mb-1 text-muted small">
+                  {t("items.createdAt", "Created At")}
+                </p>
+                <p className="fw-bold">
+                  {new Date(item.createdAt).toLocaleString()}
+                </p>
               </div>
               <div className="col-md-6">
-                <p className="mb-1 text-muted small">{t("items.updatedAt", "Updated At")}</p>
-                <p className="fw-bold">{new Date(item.updatedAt).toLocaleString()}</p>
+                <p className="mb-1 text-muted small">
+                  {t("items.updatedAt", "Updated At")}
+                </p>
+                <p className="fw-bold">
+                  {new Date(item.updatedAt).toLocaleString()}
+                </p>
               </div>
             </div>
 
-            <h3 className="h5 border-bottom pb-2 mb-3">{t("items.customFields", "Custom Fields")}</h3>
+            <h3 className="h5 border-bottom pb-2 mb-3">
+              {t("items.customFields", "Custom Fields")}
+            </h3>
             <div className="row">
               {item.fieldValues.map((fv) => (
                 <div key={fv.fieldId} className="col-md-6 mb-3">
                   <p className="mb-1 text-muted small">{fv.fieldTitle}</p>
                   <p className="fw-medium">
                     {fv.fieldType === "Boolean" ? (
-                      fv.booleanValue ? "Yes" : "No"
+                      fv.booleanValue ? (
+                        "Yes"
+                      ) : (
+                        "No"
+                      )
                     ) : fv.fieldType === "Numeric" ? (
                       fv.numericValue
                     ) : fv.fieldType === "Link" ? (
-                      <a href={fv.textValue} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={fv.textValue}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {fv.textValue}
                       </a>
                     ) : (
@@ -143,10 +166,16 @@ const ItemPage: React.FC = () => {
             </div>
 
             <div className="d-flex gap-2 mt-4 pt-3 border-top">
-              <button className="btn btn-primary" onClick={() => setActiveTab("edit")}>
+              <button
+                className="btn btn-primary"
+                onClick={() => setActiveTab("edit")}
+              >
                 {t("common.edit", "Edit")}
               </button>
-              <button className="btn btn-outline-danger" onClick={() => setShowDeleteModal(true)}>
+              <button
+                className="btn btn-outline-danger"
+                onClick={() => setShowDeleteModal(true)}
+              >
                 {t("common.delete", "Delete")}
               </button>
             </div>
